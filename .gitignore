@@ -8,7 +8,7 @@ node_modules/babel-preset-env/package.json
 /coverage
 
 # production
-
+/build
 
 # misc
 /.vscode
@@ -25,3 +25,17 @@ node_modules.zip
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Claude Code session context
+CLAUDE.md
+
+# Local EPUB backups and debris (do not bundle into deploys)
+public/Chap_10_0.epub
+public/Chap_10_single.epub
+public/Chap_1_intro.epub
+public/merge_from_ofoct copy.epub
+public/merge_from_ofoct_orig.epub
+public/Danish Folktales, Legends, and Other Stories.epub
+
+# Tree output (regenerable, not source)
+nexus2-1_dir.txt
