@@ -13,12 +13,12 @@ import {bindActionCreators} from "redux";
 import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
 
-const CIToChapterID = {
-    1: 6,
-    2: 7,
-    3: 8,
-    4: 9,
-    5: 10,
+const PersonIDToChapterID = {
+    150: 6,  // Bitte Jens Kristensen
+    235: 7,  // Kirsten Marie Pedersdatter
+    241: 8,  // Jens Peter Pedersen
+    90:  9,  // Ane Margrete Jensdatter
+    123: 10, // Peder Johansen
 };
 
 class PeopleView extends Component {
@@ -49,12 +49,9 @@ class PeopleView extends Component {
     }
 
     openCoreInformantTab() {
-        if (this.props.person.hasOwnProperty("core_informant")) {
-            let CoreInformantID = this.props.person['core_informant'];
-            if (CoreInformantID > 0 && CoreInformantID <= 5) {
-                let QueryID = CIToChapterID[CoreInformantID];
-                this.props.tabViewerActions.addTab(QueryID, this.props.person['full_name'], "Book");
-            }
+        const chapterID = PersonIDToChapterID[this.props.person.person_id];
+        if (chapterID !== undefined) {
+            this.props.tabViewerActions.addTab(chapterID, this.props.person['full_name'], "Book");
         }
     }
 

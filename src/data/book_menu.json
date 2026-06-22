@@ -4,76 +4,76 @@
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 0,
-        "location": 0
+        "location": "chap_01/index_split_000.html"
     },
     {
         "name": "2. The Rise of Folklore Scholarship",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 1,
-        "location": 12
+        "location": "chap_02/index_split_000.html"
     },
     {
         "name": "3. Evald Tang Kristensen's Life and Work",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 2,
-        "location": 40
+        "location": "chap_03/index_split_000.html"
     },
     {
         "name": "4. Folklore Genres",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 3,
-        "location": 67
+        "location": "chap_04/index_split_000.html"
     },
     {
         "name": "5. Mapping Folklore",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 4,
-        "location": 74
+        "location": "chap_05/index_split_000.html"
     },
     {
         "name": "6. Repertoire and the Individual",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 5,
-        "location": 80
+        "location": "chap_06/index_split_000.html"
     },
     {
         "name": "7. 'Bitte Jens' Kristensen: Cobbled Together",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 6,
-        "location": 83
+        "location": "chap_07/index_split_000.html"
     },
     {
         "name": "8. Kirsten Marie Pedersdatter: Between Farms and Smallholding",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 7,
-        "location": 103
+        "location": "chap_08/index_split_000.html"
     },
     {
         "name": "9. Jens Peter Pedersen: Day Laborer and Turner",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 8,
-        "location": 125
+        "location": "chap_09/index_split_000.html"
     },
     {
         "name": "10. Ane Margrete Jensdatter: Old Age and Rural Poverty",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 9,
-        "location": 141
+        "location": "chap_10/index_split_000.html"
     },
     {
         "name": "11. Peder Johansen: Miller, Fiddler, Bachelor Storyteller",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 10,
-        "location": 143
+        "location": "chap_11/index_split_000.html"
     }
 ]

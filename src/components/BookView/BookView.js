@@ -37,9 +37,11 @@ class BookView extends Component {
                 key={item.id}
                 // handler for when it is clicked
                 onClick={() => {
-                    // go to the chapter that was clciked
-                    this.rendition.display(item.location);
-                    // hide the dropdown
+                    // Use spine index derived from the epub's own navigation
+                    const idx = this.chapterSpineIndices && this.chapterSpineIndices[item.id];
+                    if (idx != null) {
+                        this.rendition.display(idx);
+                    }
                     this.setState({
                         "dropdownActive": false,
                     });
@@ -51,6 +53,8 @@ class BookView extends Component {
         // to be set once the book is rendered
         this.book = null;
         this.rendition = null;
+        // spine indices keyed by TOC position, populated after epub loads
+        this.chapterSpineIndices = null;
         // ref to the book div so we can render the content there
         this.bookRef = React.createRef();
         // bind the event handler so it works properly inside the listener
@@ -76,14 +80,20 @@ class BookView extends Component {
                 "height": "100%",
                 "width": "100%",
             });
+            // Build a spine-index map from the epub's own navigation so the
+            // TOC dropdown always matches the actual loaded EPUB structure.
+            this.chapterSpineIndices = this.book.navigation.toc.map((entry) => {
+                const section = this.book.spine.get(entry.href);
+                return section ? section.index : null;
+            });
             // variable to store the final location
             let location;
-            // numerical ID means it's a chapter number
+            // numerical ID means it's a chapter number — look up spine index
             if (typeof this.props.id === "number") {
-                // get the corresponding spot in the book for the chapter
-                ({location} = menuList[this.props.id]);
+                const idx = this.chapterSpineIndices[this.props.id];
+                location = idx != null ? idx : 0;
             } else if (typeof this.props.id === "string") {
-                // id is a string location in the book, use that
+                // id is a CFI saved from a previous page turn, use that
                 location = this.props.id;
             } else {
                 // bad type, warn that
