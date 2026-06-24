@@ -55,3 +55,14 @@ export function searchText(query) {
         "payload": query,
     };
 }
+
+/**
+ * Search stories by publication_info substring match (e.g. "DS_II_D_5")
+ * @param {String} query Publication info query
+ */
+export function searchPublicationInfo(query) {
+    return {
+        "type": types.SEARCH_PUBLICATION_INFO,
+        "payload": query,
+    };
+}

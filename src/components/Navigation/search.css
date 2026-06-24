@@ -12,11 +12,11 @@ and (min-height: 768px){
 }
 
 .SearchComponent {
-    padding: 5% 0 3% 2%;
+    padding: 5% 0 4% 2%;
     background: #0081C6;
     margin-bottom: 20%;
     margin-top: 10%;
-    height: 23%;
+    height: auto;
     overflow: visible;
 }
 
@@ -40,4 +40,26 @@ and (min-height: 768px){
 
 .SearchComponent input[type=text]:focus {
     outline: none;
+}
+
+.search-mode-radios {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-left: 10%;
+    margin-top: 6%;
+}
+
+.search-mode-radios label {
+    color: white;
+    font-size: 0.75em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-mode-radios input[type=radio] {
+    margin: 0;
+    accent-color: white;
 }

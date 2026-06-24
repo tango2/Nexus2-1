@@ -658,6 +658,19 @@ export function getManuscriptImages(story_id) {
     return ManuscriptReduced[String(story_id)] || [];
 }
 
+/**
+ * Case-insensitive substring search on publication_info (e.g. "DS_II_D_5").
+ * Returns matching cstories entries.
+ * @param {String} query
+ * @returns {Array}
+ */
+export function searchByPublicationInfo(query) {
+    if (!query || query.trim().length === 0) return [];
+    const lq = query.toLowerCase().trim();
+    return arrayTransformation(storySearch.story)
+        .filter(s => s.publication_info && s.publication_info.toLowerCase().includes(lq));
+}
+
 const TEXT_FIELDS = ["danish_manuscript", "danish_publication", "english_manuscript", "english_publication", "annotation"];
 
 /**
