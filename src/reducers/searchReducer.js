@@ -4,8 +4,8 @@ import * as actions from "../actions/actionTypes";
 import Fuse from "fuse.js";
 // array-ifier
 import {arrayTransformation} from "../utils";
-// function to get keywords
-import {getKeywords} from "../data-stores/DisplayArtifactModel";
+// function to get keywords, and text search
+import {getKeywords, searchStoryTexts} from "../data-stores/DisplayArtifactModel";
 // starter state if there is no previous data
 import initialState from "./initialState";
 
@@ -34,6 +34,20 @@ export default function search(state = initialState.search, action) {
             });
             // return the post-search state
             return newState;
+        }
+        case actions.SEARCH_TEXT: {
+            const results = searchStoryTexts(action.payload);
+            action.asyncDispatch({
+                "type": actions.DISPLAY_ITEMS,
+                "payload": results,
+            });
+            return {
+                ...state,
+                "inputValue": action.payload,
+                "results": results,
+                "suggestions": [],
+                "searchingState": false,
+            };
         }
         case actions.SET_SEARCH_STATE:
             return setSearchState(state, action.payload);

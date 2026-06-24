@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import Modal from "react-modal";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import RightBar from "../RightBar/RightBar";
-import {getPeopleByID, getGenreByID, getETKByID, getTangoByID} from "../../data-stores/DisplayArtifactModel";
+import {getPeopleByID, getGenreByID, getETKByID, getTangoByID, getManuscriptImages} from "../../data-stores/DisplayArtifactModel";
+import ManuscriptViewer from "../ManuscriptViewer/ManuscriptViewer";
 import {arrayTransformation} from "../../utils";
 import {addNode} from "../NexusGraph/NexusGraphModel";
 import "./StoryView.css";
@@ -31,7 +32,7 @@ class StoryView extends Component {
             "lastStoryVersionOpen": 1,
             // start with the first accordion tab open
             "openTab": 0,
-            "storyVersionOpen": [true, false, false, false],
+            "storyVersionOpen": [true, false, false, false, false],
             // two versions wouldn't be open
             "twoVersions": false,
             "fontSize": 16,
@@ -229,6 +230,7 @@ class StoryView extends Component {
             } = story,
             personData = getPeopleByID(informant_id),
             PlaceObjectArray = places.place,
+            manuscriptImages = getManuscriptImages(story.story_id),
             {
                 isMapExpanded,
                 openTab,
@@ -432,6 +434,10 @@ class StoryView extends Component {
                                                 onClick={this.storyViewerClickHandler.bind(this, 3)}>
                                                 Danish ms Transcription
                                             </li>
+                                            <li className={`button ${!storyVersionOpen[4] && "secondary"}`}
+                                                onClick={this.storyViewerClickHandler.bind(this, 4)}>
+                                                Manuscript Pages
+                                            </li>
                                         </ul>
                                         <div className="grid-x medium-2">
                                             {/* only render the active story versions */}
@@ -439,7 +445,9 @@ class StoryView extends Component {
                                                 <div className={`cell story ${twoVersions && "medium-6"}`} key={i}>
                                                     <div className="card">
                                                         <div className="card-section" style={{fontSize: this.state.fontSize+"px"}}>
-                                                            {this.renderComponentView(story[indexToVersion[i]], "Version")}
+                                                            {i === 4
+                                                                ? <ManuscriptViewer images={manuscriptImages} />
+                                                                : this.renderComponentView(story[indexToVersion[i]], "Version")}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -515,6 +523,10 @@ class StoryView extends Component {
                                     onClick={this.storyViewerClickHandler.bind(this, 3)}>
                                     Danish Transcription
                                 </li>
+                                <li className={`button ${!storyVersionOpen[4] && "secondary"}`}
+                                    onClick={this.storyViewerClickHandler.bind(this, 4)}>
+                                    Manuscript Pages
+                                </li>
                             </ul>
                             <div className="grid-x">
                                 {/* only render the active story versions */}
@@ -526,7 +538,9 @@ class StoryView extends Component {
                                     }}>
                                         <div className="card">
                                             <div className="card-section" style={{fontSize: this.state.fontSize+"px"}}>
-                                                {this.renderComponentView(story[indexToVersion[i]], "Version")}
+                                                {i === 4
+                                                    ? <ManuscriptViewer images={manuscriptImages} />
+                                                    : this.renderComponentView(story[indexToVersion[i]], "Version")}
                                             </div>
                                         </div>
                                     </div>

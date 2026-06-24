@@ -28,6 +28,10 @@ import dataTango from "../data/ctango_indices.json";
 import {arrayTransformation} from "../utils";
 // import manuscript image data based on stories
 import ManuscriptData from "../data/cmanuscript_images";
+// import reduced manuscript data (story_id → [{seq, img_path}])
+import ManuscriptReduced from "../data/cmanuscript_images_reduced.json";
+// import story texts for full-text search
+import StoryTexts from "../data/cstory_texts.json";
 
 // helper functions
 
@@ -73,6 +77,8 @@ const allFieldtripId = -1;
 const fieldtripsData = arrOfObjToObj(FieldtripsData.fieldtrip, "fieldtrip_id");
 // converted data for stories
 const formattedStoryData = arrOfObjToObj(AllStories, "story_id");
+// lookup from story_id to cstories entry (for search result display)
+const storySearchByID = arrOfObjToObj(storySearch.story, "story_id");
 // converted general place data
 const placesData = arrOfObjToObj(places.place, "place_id");
 // converted data for mentioned places
@@ -639,4 +645,32 @@ export function getTangoByID(tango_id) {
         console.warn("Invalid Tango ID");
         return null;
     }
+}
+
+/**
+ * Return the manuscript image entries for a story.
+ * Each entry: { seq, img_path } where img_path is relative to public/
+ * Thumbnail path: insert "thumb_" before the filename.
+ * @param {Number} story_id
+ * @returns {Array}
+ */
+export function getManuscriptImages(story_id) {
+    return ManuscriptReduced[String(story_id)] || [];
+}
+
+const TEXT_FIELDS = ["danish_manuscript", "danish_publication", "english_manuscript", "english_publication", "annotation"];
+
+/**
+ * Case-insensitive substring search across all four story text versions and annotation.
+ * Returns matching cstories entries (the compact format used by the navigator).
+ * @param {String} query Search term
+ * @returns {Array} Matching story objects from cstories
+ */
+export function searchStoryTexts(query) {
+    if (!query || query.trim().length === 0) return [];
+    const lq = query.toLowerCase().trim();
+    return arrayTransformation(StoryTexts.story)
+        .filter(s => TEXT_FIELDS.some(f => s[f] && s[f].toLowerCase().includes(lq)))
+        .map(s => storySearchByID[s.story_id])
+        .filter(Boolean);
 }

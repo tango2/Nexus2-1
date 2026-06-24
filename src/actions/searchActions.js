@@ -44,3 +44,14 @@ export function setSearch(newState) {
         "payload": newState,
     };
 }
+
+/**
+ * Search story text (all four versions + annotation) by substring match
+ * @param {String} query Search term
+ */
+export function searchText(query) {
+    return {
+        "type": types.SEARCH_TEXT,
+        "payload": query,
+    };
+}

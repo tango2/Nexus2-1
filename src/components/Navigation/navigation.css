@@ -146,14 +146,14 @@ and (min-height: 1024px){
     -webkit-appearance: none; /* Override default look */
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #ED4C67; /* Green background */
+    background: #0081C6;
     cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #ED4C67; /* Green background */
+    background: #0081C6;
     cursor: pointer; /* Cursor on hover */
 }
 
