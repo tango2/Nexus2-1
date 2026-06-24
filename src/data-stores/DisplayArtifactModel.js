@@ -746,10 +746,33 @@ function storyMatchesQuery(combinedText, orGroups) {
     );
 }
 
+const FIELD_LABELS = {
+    "danish_manuscript":  "Danish ms",
+    "danish_publication": "Danish pub",
+    "english_manuscript": "English ms",
+    "english_publication":"English pub",
+    "annotation":         "annotation",
+};
+
+/**
+ * Return which TEXT_FIELDS individually contain any positive query term.
+ * Used for display attribution ("matched in: annotation").
+ */
+function matchingFields(s, orGroups) {
+    const posTerms = [];
+    orGroups.forEach(group =>
+        group.forEach(t => { if (!t.exclude) posTerms.push(t.text); })
+    );
+    return TEXT_FIELDS.filter(f =>
+        s[f] && posTerms.some(t => s[f].toLowerCase().includes(t))
+    );
+}
+
 /**
  * Boolean full-text search across all four story text versions and annotation.
  * Supports AND (space), OR, NOT (-), and phrase ("...") operators.
- * Returns matching cstories entries (compact format used by the navigator).
+ * Returns matching cstories entries with a _matchedFields property listing
+ * which fields contained query terms (e.g. ["annotation"]).
  * @param {String} query
  * @returns {Array}
  */
@@ -757,11 +780,16 @@ export function searchStoryTexts(query) {
     if (!query || query.trim().length === 0) return [];
     const orGroups = parseSearchQuery(query.trim());
     if (orGroups.length === 0) return [];
-    return arrayTransformation(StoryTexts.story)
-        .filter(s => {
-            const combined = TEXT_FIELDS.map(f => s[f] || "").join(" ").toLowerCase();
-            return storyMatchesQuery(combined, orGroups);
-        })
-        .map(s => storySearchByID[s.story_id])
-        .filter(Boolean);
+    const results = [];
+    arrayTransformation(StoryTexts.story).forEach(s => {
+        const combined = TEXT_FIELDS.map(f => s[f] || "").join(" ").toLowerCase();
+        if (!storyMatchesQuery(combined, orGroups)) return;
+        const base = storySearchByID[s.story_id];
+        if (!base) return;
+        const fields = matchingFields(s, orGroups);
+        results.push({ ...base, "_matchedFields": fields.map(f => FIELD_LABELS[f]) });
+    });
+    return results;
 }
+
+export { FIELD_LABELS };

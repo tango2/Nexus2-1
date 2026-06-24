@@ -103,18 +103,18 @@ class Navigation extends React.Component {
                     // don't render an element for it
                     return null;
             }
-            // return a list element
             return (<li
-                // key for React
                 key={displayOntology + id}
-                // on click, do all the processing necessary when loading this item
                 onClick={() => {
                     this.handleIDQuery(id, displayName, displayOntology, item);
                 }}>
-                {/* put our desired image on the left of the item */}
                 {image}
-                {/* put the item's name right after that */}
-                {displayName}
+                <span className="result-name">{displayName}</span>
+                {item._matchedFields && item._matchedFields.length > 0 && (
+                    <span className="result-match-fields">
+                        {item._matchedFields.join(", ")}
+                    </span>
+                )}
             </li>);
         });
     }
