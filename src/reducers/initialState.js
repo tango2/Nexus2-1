@@ -73,5 +73,7 @@ function InitializeNavigator() {
         "toDate": 1899,
         // start with the filter off
         "timeFilterOn": false,
+        // true only when displayList shows text/publication search results (shows filter chips)
+        "searchMode": false,
     };
 }

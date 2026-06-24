@@ -38,7 +38,7 @@ export default function search(state = initialState.search, action) {
         case actions.SEARCH_TEXT: {
             const results = searchStoryTexts(action.payload);
             action.asyncDispatch({
-                "type": actions.DISPLAY_ITEMS,
+                "type": actions.SET_SEARCH_RESULTS,
                 "payload": results,
             });
             return {
@@ -52,7 +52,7 @@ export default function search(state = initialState.search, action) {
         case actions.SEARCH_PUBLICATION_INFO: {
             const results = searchByPublicationInfo(action.payload);
             action.asyncDispatch({
-                "type": actions.DISPLAY_ITEMS,
+                "type": actions.SET_SEARCH_RESULTS,
                 "payload": results,
             });
             return {

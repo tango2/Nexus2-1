@@ -17,6 +17,7 @@ import MapView from "../MapView/MapView";
 import NavigatorComponent from "./NavigatorComponent";
 import NexusGraph from "../NexusGraph/NexusGraph";
 import SearchComponent from "./SearchComponent";
+import FilterChips from "../FilterChips/FilterChips";
 // react functionality
 import React from "react";
 // prop validation
@@ -226,6 +227,7 @@ class Navigation extends React.Component {
                             onClick={() => {
                                 addTab(0, "Fieldtrip Tool", "FieldtripTool");
                             }}>Open Fieldtrip Viewer</button>}
+                    <FilterChips />
                     {this.displayList(displayList)}
                 </div>;
                 break;

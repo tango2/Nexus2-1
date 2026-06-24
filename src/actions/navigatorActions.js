@@ -13,6 +13,17 @@ export function displayItems(list) {
 }
 
 /**
+ * Update displayed items without leaving search mode (used by filter chips).
+ * @param {Array} list Filtered items to display
+ */
+export function filterDisplayItems(list) {
+    return {
+        "payload": list,
+        "type": types.SET_SEARCH_RESULTS,
+    };
+}
+
+/**
  * Handler for a time filter's change
  * @param {Event} event Event describing the change
  */

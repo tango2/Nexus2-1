@@ -71,6 +71,15 @@ function getSiblings(list, key) {
     }
 }
 
+// Build story_id → genre names reverse lookup at startup
+const storyIdToGenres = {};
+arrayTransformation(dataGenre.genre).forEach(g => {
+    arrayTransformation(g.stories.story).forEach(s => {
+        if (!storyIdToGenres[s.story_id]) storyIdToGenres[s.story_id] = [];
+        storyIdToGenres[s.story_id].push(g.name);
+    });
+});
+
 // fieldtrip_id of all fieldtrip is -1
 const allFieldtripId = -1;
 // converted data for fieldtrips
@@ -656,6 +665,25 @@ export function getTangoByID(tango_id) {
  */
 export function getManuscriptImages(story_id) {
     return ManuscriptReduced[String(story_id)] || [];
+}
+
+/**
+ * Return genre names for a story.
+ * @param {Number} story_id
+ * @returns {Array<string>}
+ */
+export function getStoryGenres(story_id) {
+    return storyIdToGenres[story_id] || [];
+}
+
+/**
+ * Return the collection prefix from a publication_info string (e.g. "DS" from "DS_II_D_5").
+ * @param {string} publication_info
+ * @returns {string|null}
+ */
+export function getCollectionPrefix(publication_info) {
+    if (!publication_info) return null;
+    return publication_info.split("_")[0];
 }
 
 /**

@@ -21,9 +21,10 @@ export default function navigator(state = initialState.navigator, {payload, type
         // if we are to add a tab
         case actions.UPDATE_ITEMS:
             return updateItems(state);
-        // if we are to add a tab
         case actions.DISPLAY_ITEMS:
-            return displayItems(state, payload);
+            return displayItems(state, payload, false);
+        case actions.SET_SEARCH_RESULTS:
+            return displayItems(state, payload, true);
         // if we are to add a tab
         case actions.TIME_FILTER_HANDLER:
             return timeFilterHandler(state, payload);
@@ -84,10 +85,11 @@ function updateItems(prevState) {
 /**
  * Set new display items
  * @param {Object} prevState Previous state to change
- * @param {Object} list Items to display
+ * @param {Array} list Items to display
+ * @param {boolean} searchMode Whether items come from a text/publication search
  * @returns {Object} The state with new items
  */
-function displayItems(prevState, list) {
+function displayItems(prevState, list, searchMode) {
     // set placeList - if people, then pull places associated with people, etc.
     let PlaceList = ["hi"],
         InitialItem = list[0];
@@ -110,12 +112,12 @@ function displayItems(prevState, list) {
         }
     }
 
-    // set up the items based on
     const newState = {
         ...prevState,
         "displayList": list,
         "itemsList": list.length === 903 ? list : prevState.itemsList,
         "placeList": PlaceList,
+        "searchMode": Boolean(searchMode),
     };
     if (newState.timeFilterOn === true) {
         // if the time filter is on, we need
