@@ -70,7 +70,7 @@ class MapView extends Component {
 
         var markerParams = {
             radius: 4,
-            fillColor: '#0081C6',
+            fillColor: 'orange',
             color: '#fff',
             weight: 1,
             opacity: 0.5,
