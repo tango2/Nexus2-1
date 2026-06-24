@@ -674,16 +674,66 @@ export function searchByPublicationInfo(query) {
 const TEXT_FIELDS = ["danish_manuscript", "danish_publication", "english_manuscript", "english_publication", "annotation"];
 
 /**
- * Case-insensitive substring search across all four story text versions and annotation.
- * Returns matching cstories entries (the compact format used by the navigator).
- * @param {String} query Search term
- * @returns {Array} Matching story objects from cstories
+ * Parse a search query into OR groups of AND terms.
+ *
+ * Syntax:
+ *   word1 word2        — AND: both must appear anywhere in text
+ *   word1 OR word2     — OR: either must appear
+ *   -word              — NOT: word must NOT appear
+ *   "exact phrase"     — phrase: substring must appear verbatim
+ *   -"exact phrase"    — phrase exclusion
+ *
+ * OR has lower precedence than AND, so:
+ *   nisse trold OR gård  →  (nisse AND trold) OR (gård)
+ *
+ * @param {String} raw
+ * @returns {Array<Array<{exclude: boolean, text: string}>>}
+ */
+function parseSearchQuery(raw) {
+    return raw.split(/\s+OR\s+/).map(part => {
+        const terms = [];
+        const tokenRe = /(-?"[^"]*"|[^\s]+)/g;
+        let m;
+        while ((m = tokenRe.exec(part)) !== null) {
+            let token = m[1];
+            const exclude = token.startsWith("-");
+            if (exclude) token = token.slice(1);
+            const text = (token.startsWith('"') && token.endsWith('"'))
+                ? token.slice(1, -1)
+                : token;
+            if (text.length > 0) {
+                terms.push({ exclude, text: text.toLowerCase() });
+            }
+        }
+        return terms;
+    }).filter(group => group.length > 0);
+}
+
+function storyMatchesQuery(combinedText, orGroups) {
+    return orGroups.some(andTerms =>
+        andTerms.every(({ exclude, text }) => {
+            const present = combinedText.includes(text);
+            return exclude ? !present : present;
+        })
+    );
+}
+
+/**
+ * Boolean full-text search across all four story text versions and annotation.
+ * Supports AND (space), OR, NOT (-), and phrase ("...") operators.
+ * Returns matching cstories entries (compact format used by the navigator).
+ * @param {String} query
+ * @returns {Array}
  */
 export function searchStoryTexts(query) {
     if (!query || query.trim().length === 0) return [];
-    const lq = query.toLowerCase().trim();
+    const orGroups = parseSearchQuery(query.trim());
+    if (orGroups.length === 0) return [];
     return arrayTransformation(StoryTexts.story)
-        .filter(s => TEXT_FIELDS.some(f => s[f] && s[f].toLowerCase().includes(lq)))
+        .filter(s => {
+            const combined = TEXT_FIELDS.map(f => s[f] || "").join(" ").toLowerCase();
+            return storyMatchesQuery(combined, orGroups);
+        })
         .map(s => storySearchByID[s.story_id])
         .filter(Boolean);
 }

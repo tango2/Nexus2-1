@@ -44,15 +44,16 @@ and (min-height: 768px){
 
 .search-mode-radios {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-left: 10%;
-    margin-top: 6%;
+    margin-top: 5%;
 }
 
 .search-mode-radios label {
     color: white;
-    font-size: 0.75em;
+    font-size: 0.9em;
     cursor: pointer;
     display: flex;
     align-items: center;
