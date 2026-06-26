@@ -1,0 +1,17 @@
+.MacroscopeView {
+    width: 100%;
+    background: white;
+    overflow: hidden;
+}
+
+.MacroscopeView-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.MacroscopeView-error {
+    padding: 2em;
+    color: red;
+}

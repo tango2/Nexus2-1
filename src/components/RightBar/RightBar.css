@@ -8,9 +8,9 @@ and (min-height: 600px) and (max-height: 700px){
         padding: 6%;
     }
     .biography{font-size: 1em;}
-    .icon{height:2.3em;}
+    .icon{height:40px;}
     .icon-label{font-size:.7em;margin-bottom:10px;}
-    .icon-item{height:2em;}
+    .icon-item{height:32px;width:32px;}
 }
 /*Average Laptops*/
 @media screen
@@ -22,9 +22,9 @@ and (min-height: 700px) and (max-height: 768px){
         padding: 6%;
     }
     .biography{font-size: 1.2em;}
-    .icon{height:4.2em;}
+    .icon{height:64px;}
     .icon-label{margin-bottom:15px;}
-    .icon-item{height:1.4em;}
+    .icon-item{height:32px;width:32px;}
 }
 
 /*Tall Laptops*/
@@ -36,7 +36,8 @@ and (min-height: 769px){
     }
     .biography{font-size: 1.5em;}
     .icon-label{margin-bottom:25px;}
-    .icon{height:4em;}
+    .icon{height:64px;}
+    .icon-item{height:32px;width:32px;}
 }
 
 /* Sliding right bar for people places stories */
@@ -110,7 +111,7 @@ and (min-height: 769px){
 .icon {
     border: 3px solid white;
     border-radius: 100%;
-    padding: 14%;
+    padding: 5%;
     margin-left: 17%;
     cursor: pointer;
 }

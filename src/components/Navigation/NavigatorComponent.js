@@ -13,21 +13,29 @@ import connect from "react-redux/es/connect/connect";
 class Navigation extends Component {
     constructor(props) {
         super(props);
-        // options for the two dropdowns
+        // options for the three navigator panels
         this.dataNav = ["People", "Places", "Stories"];
         this.TINav = ["ETK Index", "Tangherlini Index", "Fieldtrips", "Genres"];
+        this.macroscopeNav = [
+            {id: "witchhunter", name: "WitchHunter & TrollFinder", desc: "Geo-map ETK story categories; bounding-box keyword search"},
+            {id: "ghostscope", name: "GhostScope & TreasureX", desc: "Conceptual geographies and directional movement vectors"},
+            {id: "elfyelp", name: "ElfYelp", desc: "LDA geo-topics across the ETK collection"},
+        ];
         // initial state, further defined later
         this.state = {
             // which of the subclasses is currently active
             "activeList": null,
             // whether the data navigator or TI navigator is shown
             "dataNavView": true,
+            // whether the macroscope panel is shown
+            "macroscopeView": false,
             // submenus to show (for TI navigator)
             "dropdownLists": [],
             // navigators to render
             "navigators": [
-                {"name": "Data Navigator", "tabClass": "dataNavView"},
-                {"name": "Topic & Index Navigator", "tabClass": "TINavView"},
+                {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
+                {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
+                {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
             ],
         };
         // get previous view data from session storage, default to stories
@@ -39,8 +47,9 @@ class Navigation extends Component {
                 ...this.state,
                 "dataNavView": false,
                 "navigators": [
-                    {"name": "Data Navigator", "tabClass": "dataNavView"},
-                    {"name": "Topic & Index Navigator", "tabClass": "TINavView active"},
+                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
+                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView active"},
+                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
                 ],
                 "path": ["Topic & Index Navigator"],
             };
@@ -50,8 +59,9 @@ class Navigation extends Component {
                 ...this.state,
                 "dataNavView": true,
                 "navigators": [
-                    {"name": "Data Navigator", "tabClass": "dataNavView active"},
-                    {"name": "Topic & Index Navigator", "tabClass": "TINavView"},
+                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView active"},
+                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
+                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
                 ],
                 "path": ["Data Navigator"],
             };
@@ -108,40 +118,45 @@ class Navigation extends Component {
         this.props.actions.displayItems([]);
         // if data navigator was clicked
         if (name === "Data Navigator") {
-            // set the indicator to show this
             this.props.setDisplayLabel("Data Navigator");
             this.setState({
-                // make data navigator active
                 "dataNavView": true,
-                // erase any existing dropdown lists
+                "macroscopeView": false,
                 "dropdownLists": [],
-                // make data navigator active
                 "navigators": [
-                    {"name": "Data Navigator", "tabClass": "tab cell medium-6 dataNavView active"},
-                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-6 TINavView"},
+                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView active"},
+                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
+                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
                 ],
-                // set data navigator as the path
                 "path": ["Data Navigator"],
             });
         } else if (name === "Topic & Index Navigator") {
-            // topic & index navigator clicked
-            // set the indicator to show this
             this.props.setDisplayLabel("Topic & Index Navigator");
             this.setState({
-                // make topic & index navigator active
                 "dataNavView": false,
-                // erase any existing dropdown lists
+                "macroscopeView": false,
                 "dropdownLists": [],
-                // make topic & index navigator active
                 "navigators": [
-                    {"name": "Data Navigator", "tabClass": "tab cell medium-6 dataNavView "},
-                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-6 TINavView active"},
+                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
+                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView active"},
+                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
                 ],
-                // set topic & index navigator as the path
                 "path": ["Topic & Index Navigator"],
             });
+        } else if (name === "Macroscope") {
+            this.props.setDisplayLabel("Macroscope");
+            this.setState({
+                "dataNavView": false,
+                "macroscopeView": true,
+                "dropdownLists": [],
+                "navigators": [
+                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
+                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
+                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView active"},
+                ],
+                "path": ["Macroscope"],
+            });
         } else {
-            // bad tab name, warn this
             console.warn("Invalid tab name", name);
         }
     }
@@ -380,62 +395,54 @@ class Navigation extends Component {
     }
 
     render() {
-        // determine what is being viewed based on state
         const ontologyType = this.state.dataNavView === true ? "dataNav" : "TINav";
         return (
-            // container for the whole component
             <div className="NavigatorComponent grid-y">
-                {/* make the top tabs smaller */}
                 <div className="navigator-tabs cell medium-1 grid-x">{
-                    // for each of the two naviagtor tabs
                     this.state.navigators.map(({name, tabClass}) => (
-                        // create a clickable div
                         <div
-                            // style it as a navigator tab with its custom CSS
-                            className={`tab cell medium-6 ${tabClass}`}
-                            // key for React
+                            className={tabClass}
                             key={name}
-                            // when clicked, go to its respective tab
                             onClick={this.setActiveTab.bind(this, name)}>
-                            {/* use the name as the label */}
                             {name}
                         </div>
                     ))
                 }</div>
-                {/* actual ontology selection options */}
                 <div className="navigator-options-wrapper cell medium-11">
-                    {/* based on what is viewed show the specified ontology */}
-                    <div className={`cell active ${ontologyType}View`}>
-                        {/* create the list of ontologies to choose */}
-                        <ul className="ontologyList">{
-                            // for each of the ontologies to display
-                            this[ontologyType].map((ontology) => (
+                    {this.state.macroscopeView ? (
+                        <ul className="macroscopeList">
+                            {this.macroscopeNav.map((tool) => (
                                 <li
-                                    // style it based on the ontology type, and make the active one shaded
-                                    className={`ontology ${ontology} ${this.state.activeList === ontology ? "active" : ""}`}
-                                    // key for React
-                                    key={ontology}
-                                    // when clicked, go to the desired ontology
-                                    onClick={this.handleLevelTwoClick.bind(this, ontology)}>
-                                    {/* name to show is the ontology */}
-                                    {ontology}
+                                    className="macroscopeTool"
+                                    key={tool.id}
+                                    onClick={() => this.props.addTab(tool.id, tool.name, "Macroscope")}>
+                                    <span className="macroscope-tool-name">{tool.name}</span>
+                                    <br />
+                                    <span className="macroscope-tool-desc">{tool.desc}</span>
                                 </li>
-                            ))
-                        }</ul>
-                    </div>
-                    {/* for each of the dropdowns, if needed */}
-                    {this.state.dropdownLists.map((list, i) => (
-                        // generate a dropdown with the options
-                        <NavigationDropdownMenu
-                            // style it to fit with Foundation's styling
-                            className="cell"
-                            // pass it the desired options
-                            list={list}
-                            // pass it a click handler
-                            handleMenuSelect={this.selectMenu.bind(this)}
-                            // key for React
-                            key={i} />
-                    ))}
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className={`cell active ${ontologyType}View`}>
+                            <ul className="ontologyList">{
+                                this[ontologyType].map((ontology) => (
+                                    <li
+                                        className={`ontology ${ontology} ${this.state.activeList === ontology ? "active" : ""}`}
+                                        key={ontology}
+                                        onClick={this.handleLevelTwoClick.bind(this, ontology)}>
+                                        {ontology}
+                                    </li>
+                                ))
+                            }</ul>
+                            {this.state.dropdownLists.map((list, i) => (
+                                <NavigationDropdownMenu
+                                    className="cell"
+                                    list={list}
+                                    handleMenuSelect={this.selectMenu.bind(this)}
+                                    key={i} />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -470,6 +477,7 @@ function mapDispatchToProps(dispatch) {
 
 Navigation.propTypes = {
     "actions": PropTypes.object.isRequired,
+    "addTab": PropTypes.func.isRequired,
     "searchState": PropTypes.shape({
         "inputValue": PropTypes.string.isRequired,
         "results": PropTypes.array.isRequired,

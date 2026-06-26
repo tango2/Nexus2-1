@@ -46,9 +46,40 @@ and (min-height: 768px){
     background-color: #F2F2F2;
 }
 
-.tab.dataNavView.active, .tab.TINavView.active {background-color: #F2F2F2;}
+.tab.dataNavView.active, .tab.TINavView.active, .tab.macroscopeView.active {background-color: #F2F2F2;}
 
 .ontology {cursor: pointer;}
+
+.macroscopeList {
+    list-style: none;
+    margin: 4% 0 0;
+    padding: 0;
+}
+
+.macroscopeList .macroscopeTool {
+    background: #fff;
+    height: auto;
+    padding: 8% 5%;
+    border-bottom: 1px solid #d2d2d2;
+    cursor: pointer;
+}
+
+.macroscopeList .macroscopeTool:hover {
+    background-color: lightgray;
+}
+
+.macroscope-tool-name {
+    display: block;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.macroscope-tool-desc {
+    display: block;
+    font-size: 0.82em;
+    color: #555;
+    margin-top: 3px;
+}
 
 .ontologyList {
     list-style: none;

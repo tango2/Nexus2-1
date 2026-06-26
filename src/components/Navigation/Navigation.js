@@ -215,6 +215,11 @@ class Navigation extends React.Component {
                     Select a genre from the left to get started!
                 </div>);
                 break;
+            case "Macroscope":
+                toDisplay = (<div className="hintText">
+                    Select a macroscope tool from the left to open it in a new tab.
+                </div>);
+                break;
             // for anything else
             default:
                 // just render what is normally wanted
@@ -236,7 +241,7 @@ class Navigation extends React.Component {
             <div className="Navigation grid-x grid-padding-x">
                 <div className="medium-3 cell dataNavigation">
                     <SearchComponent />
-                    <NavigatorComponent setDisplayLabel={this.setDisplayLabel.bind(this)} />
+                    <NavigatorComponent setDisplayLabel={this.setDisplayLabel.bind(this)} addTab={addTab} />
                 </div>
                 <div
                     onClick={(event) => {event.stopPropagation(); this.props.actions.setSearch(false)}}
