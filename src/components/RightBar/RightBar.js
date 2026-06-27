@@ -6,6 +6,7 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import "./RightBar.css";
 import PropTypes from "prop-types";
 import {arrayTransformation} from "../../utils.js";
+import {getStoryGenres, getStoryETKIndices} from "../../data-stores/DisplayArtifactModel";
 import {bindActionCreators} from "redux";
 import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
@@ -328,19 +329,22 @@ class RightBar extends Component {
                     <ul>
                         {/* for each of the stories */}
                         {stories.map((story, i) => {
-                            // get its full name and ID
                             const {full_name, story_id} = story;
+                            const genres = getStoryGenres(story_id);
+                            const etkIndices = getStoryETKIndices(story_id);
                             return <li
-                                // key for react rerendering
                                 key={i}
-                                // when this is clicked
                                 onClick={() => {
-                                    // open up the story and add it to the graph
                                     this.clickHandler.bind(this)(story_id, full_name, "Stories", story);
                                 }}>
                                 <img className={"icon-item"} src={require("../Navigation/icons8-chat-filled-32.png")} alt="story" />
-                                {/* text should be the name of the story */}
                                 {full_name}
+                                {(genres.length > 0 || etkIndices.length > 0) && (
+                                    <span className="story-meta">
+                                        {genres.length > 0 && <span className="story-genres">{genres.join(", ")}</span>}
+                                        {etkIndices.length > 0 && <span className="story-etk">{etkIndices.join("; ")}</span>}
+                                    </span>
+                                )}
                             </li>;
                         })}
                     </ul>

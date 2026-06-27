@@ -126,3 +126,22 @@ and (min-height: 769px){
     height: 92vh;
     overflow-y: scroll;
 }
+
+.story-meta {
+    display: block;
+    margin-left: 2.6em;
+    margin-top: 3px;
+}
+
+.story-genres {
+    display: block;
+    font-size: 0.75em;
+    color: #555;
+    font-style: italic;
+}
+
+.story-etk {
+    display: block;
+    font-size: 0.70em;
+    color: #888;
+}

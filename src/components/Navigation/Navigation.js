@@ -5,6 +5,8 @@ import {
     DisplayArtifactToOntology,
     ontologyToDisplayKey,
     ontologyToID,
+    getStoryGenres,
+    getStoryETKIndices,
 } from "../../data-stores/DisplayArtifactModel";
 // functions to get nodes + links
 import {
@@ -106,6 +108,19 @@ class Navigation extends React.Component {
                     // don't render an element for it
                     return null;
             }
+            let storyMeta = null;
+            if (displayOntology === "Stories") {
+                const genres = getStoryGenres(id);
+                const etkIndices = getStoryETKIndices(id);
+                if (genres.length > 0 || etkIndices.length > 0) {
+                    storyMeta = (
+                        <span className="story-meta">
+                            {genres.length > 0 && <span className="story-genres">{genres.join(", ")}</span>}
+                            {etkIndices.length > 0 && <span className="story-etk">{etkIndices.join("; ")}</span>}
+                        </span>
+                    );
+                }
+            }
             return (<li
                 key={displayOntology + id}
                 onClick={() => {
@@ -113,6 +128,7 @@ class Navigation extends React.Component {
                 }}>
                 {image}
                 <span className="result-name">{displayName}</span>
+                {storyMeta}
                 {item._matchedFields && item._matchedFields.length > 0 && (
                     <span className="result-match-fields">
                         {item._matchedFields.join(", ")}

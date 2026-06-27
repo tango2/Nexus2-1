@@ -95,6 +95,25 @@ and (min-height: 1024px){
     font-style: italic;
 }
 
+.story-meta {
+    display: block;
+    margin-left: 2.6em;
+    margin-top: 3px;
+}
+
+.story-genres {
+    display: block;
+    font-size: 0.75em;
+    color: #555;
+    font-style: italic;
+}
+
+.story-etk {
+    display: block;
+    font-size: 0.70em;
+    color: #888;
+}
+
 .convo-icon, .person-icon, .location-icon, .fieldtrip-icon {
     display: inline-block;
     margin-right: 1em;

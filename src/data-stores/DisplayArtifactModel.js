@@ -80,6 +80,17 @@ arrayTransformation(dataGenre.genre).forEach(g => {
     });
 });
 
+// Build story_id → ETK index headings reverse lookup at startup
+const storyIdToETKIndices = {};
+arrayTransformation(dataETK.etk_index).forEach(e => {
+    if (e.stories && e.stories.story) {
+        arrayTransformation(e.stories.story).forEach(s => {
+            if (!storyIdToETKIndices[s.story_id]) storyIdToETKIndices[s.story_id] = [];
+            storyIdToETKIndices[s.story_id].push(e.heading_english);
+        });
+    }
+});
+
 // fieldtrip_id of all fieldtrip is -1
 const allFieldtripId = -1;
 // converted data for fieldtrips
@@ -674,6 +685,10 @@ export function getManuscriptImages(story_id) {
  */
 export function getStoryGenres(story_id) {
     return storyIdToGenres[story_id] || [];
+}
+
+export function getStoryETKIndices(story_id) {
+    return storyIdToETKIndices[story_id] || [];
 }
 
 /**
