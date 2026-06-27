@@ -104,6 +104,8 @@ function closeTab(ShallowNewState, RemoveIndex) {
  */
 // eslint-disable-next-line max-statements
 function addTab(ShallowNewState, {DisplayArtifactID, name, type}) {
+    // refuse to create a nameless tab
+    if (!name) return ShallowNewState;
     // get a copy of the state to ensure immutability
     const newState = {...ShallowNewState};
     // see if we can get the preexisting view matching the tab to create
@@ -142,28 +144,6 @@ function addTab(ShallowNewState, {DisplayArtifactID, name, type}) {
             })
             // and add in the new view at the end
         ).concat([newView]);
-        // tracker if we need to remove a tab
-        let RemoveTab = false;
-        // if our window is smaller than 1100px (95% sure about the units)
-        // and
-        // if we have more than 5 tabs already (including home)
-        if (window.innerWidth <= 1100 && updatedViews.length > 5) {
-            RemoveTab = true;
-        } else if (updatedViews.length > 6) {
-            // if we have more than 6 tabs already (including home) and regardless of screen size
-            RemoveTab = true;
-        }
-        // check if first non-home tab is not pinned and we need to remove a tab
-        if (RemoveTab) {
-            // index to remove defaults to the tab next to the home tab
-            let RemoveIndex = 1;
-            // if the tab is pinned then remove the next tab
-            while (updatedViews[RemoveIndex].pinned) {
-                RemoveIndex++;
-            }
-            // remove the first non-Home tab
-            updatedViews.splice(RemoveIndex, 1);
-        }
         // update the state's views
         newState.views = updatedViews;
         // update session storage with our new, updated state

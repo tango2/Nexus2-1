@@ -72,6 +72,18 @@ function nodesToIDArray(nodeCategories, type) {
 }
 
 /**
+ * Wipe all graph data from sessionStorage and return the blank initial state.
+ * @returns {Object} The blank graph { nodes, links } and empty nodeCategories
+ */
+export function clearGraph() {
+    const blankGraph = {"nodes": [{"id": "blank"}], "links": []};
+    const blankCategories = {"Fieldtrips": [], "People": [], "Places": [], "Stories": []};
+    setSessionStorage("graphData", blankGraph);
+    setSessionStorage("nodeCategories", blankCategories);
+    return {blankGraph, blankCategories};
+}
+
+/**
  * Retrieve the graph data from storage
  * @returns {Object} Nodes and links found in storage
  */
@@ -86,10 +98,15 @@ export function initializeGraph() {
             // links is empty since no data
             "links": [],
         };
-    } else {
-        // get the nodes and links from loaded data
-        return graphData;
     }
+    // Filter out any links whose source or target node no longer exists.
+    // nodeCategories and graphData are saved separately, so a crash between
+    // the two saves can leave links referencing nodes that aren't in the array.
+    const nodeIds = new Set(graphData.nodes.map(n => n.id));
+    graphData.links = graphData.links.filter(
+        link => nodeIds.has(link.source) && nodeIds.has(link.target)
+    );
+    return graphData;
 }
 
 /**
@@ -275,11 +292,11 @@ function makePrimaryLabel(sourceID, sourceType, target) {
     if (sourceType === "Places") {
         let place = getPlacesByID(sourceID);
         if (targetType === "People") {
-            let targetPerson = place.people.find(person => person.person.person_id === target.itemID);
-            return targetPerson.person.relationship.replace(",", " &");
+            let targetPerson = place.people && place.people.find(person => person.person.person_id === target.itemID);
+            return targetPerson ? targetPerson.person.relationship.replace(",", " &") : "associated with";
         }
         if (targetType === "Stories") {
-            if (place.storiesMentioned.find(story => story.story_id === target.itemID) !== undefined) {
+            if (place.storiesMentioned && place.storiesMentioned.find(story => story.story_id === target.itemID) !== undefined) {
                 return "mentioned in";
             } else {
                 return "collected";
@@ -288,7 +305,7 @@ function makePrimaryLabel(sourceID, sourceType, target) {
     }
     if (sourceType === "Stories" && targetType === "Places") {
         let targetPlace = getPlacesByID(target.itemID);
-        if (targetPlace.storiesMentioned.find(story => story.story_id === sourceID) !== undefined) {
+        if (targetPlace.storiesMentioned && targetPlace.storiesMentioned.find(story => story.story_id === sourceID) !== undefined) {
             return "mentions";
         } else {
             return "collected";
@@ -491,13 +508,12 @@ export function addNode(id, name, type, item) {
         // remove the blank node
         graphData.nodes.splice(0, 1);
     }
-    // if newNode doesn't already exist
-    if (!graphData.nodes.includes(newNode)) {
+    // if newNode doesn't already exist (check by itemID + type, not object reference)
+    if (!graphData.nodes.some(n => n.itemID === id && n.type === type)) {
         // add it to the nodes of graphData
         graphData.nodes.push(newNode);
-        // add it to the relevant array in nodeCategories and update sessionStorage
+        // add it to the relevant array in nodeCategories
         nodeCategories[type].push(newNode);
-        setSessionStorage("nodeCategories", nodeCategories);
         // add any links for this node
         graphData.links.push(...createLinkage(newNode, nodeCategories));
         // because people don't have a "fieldtrip" attribute
@@ -508,25 +524,21 @@ export function addNode(id, name, type, item) {
                 graphData.links.push(...createLinkage(fieldtrip, nodeCategories));
             });
         }
-        // filter out graph links
+        // filter out duplicate links
         graphData.links = graphData.links
             .filter((link, index) =>
-                // if the current link to check doesn't already exist in some sort of way
                 graphData.links.findIndex(
-                    // the link to test against
                     testLink => (
-                        // if both share a soucre
+                        // forward duplicate
                         (testLink.source === link.source &&
-                            // and a target (dupes)
                             testLink.target === link.target) ||
-                        // or, if that link ends where this one starts
-                        (testLink.source === link.source &&
-                            // and that starts where this ends (dupes, but in reverse direction)
-                            testLink.target === link.target)
-                        // this should be the first of that sort of link in order to keep it
+                        // reverse duplicate
+                        (testLink.source === link.target &&
+                            testLink.target === link.source)
                     )) === index
             );
-        // update the general graph data in session
+        // save both together so they stay in sync
         setSessionStorage("graphData", graphData);
+        setSessionStorage("nodeCategories", nodeCategories);
     }
 }

@@ -38,34 +38,51 @@ class Navigation extends Component {
                 {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
             ],
         };
-        // get previous view data from session storage, default to stories
-        const {data} = getSessionStorage("SelectedNavOntology") || {"data": "Stories"};
-        // if user was viewing the topic & index navigator
-        if (this.TINav.includes(data)) {
-            // set up state for that
+        // restore full navigator state saved on last unmount (covers tab, activeList, dropdowns)
+        const savedState = getSessionStorage("navigatorComponentState");
+        if (savedState) {
             this.state = {
                 ...this.state,
-                "dataNavView": false,
-                "navigators": [
-                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
-                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView active"},
-                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
-                ],
-                "path": ["Topic & Index Navigator"],
+                ...savedState,
             };
         } else {
-            // otherwise default to the PPS state
-            this.state = {
-                ...this.state,
-                "dataNavView": true,
-                "navigators": [
-                    {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView active"},
-                    {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
-                    {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
-                ],
-                "path": ["Data Navigator"],
-            };
+            // first-ever load: fall back to SelectedNavOntology heuristic
+            const {data} = getSessionStorage("SelectedNavOntology") || {"data": "Stories"};
+            if (this.TINav.includes(data)) {
+                this.state = {
+                    ...this.state,
+                    "dataNavView": false,
+                    "navigators": [
+                        {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView"},
+                        {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView active"},
+                        {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
+                    ],
+                    "path": ["Topic & Index Navigator"],
+                };
+            } else {
+                this.state = {
+                    ...this.state,
+                    "dataNavView": true,
+                    "navigators": [
+                        {"name": "Data Navigator", "tabClass": "tab cell medium-4 dataNavView active"},
+                        {"name": "Topic & Index Navigator", "tabClass": "tab cell medium-4 TINavView"},
+                        {"name": "Macroscope", "tabClass": "tab cell medium-4 macroscopeView"},
+                    ],
+                    "path": ["Data Navigator"],
+                };
+            }
         }
+    }
+
+    componentWillUnmount() {
+        setSessionStorage("navigatorComponentState", {
+            "activeList":    this.state.activeList,
+            "dataNavView":   this.state.dataNavView,
+            "macroscopeView": this.state.macroscopeView,
+            "dropdownLists": this.state.dropdownLists,
+            "navigators":    this.state.navigators,
+            "path":          this.state.path,
+        });
     }
 
     // determine if we need to set up to show a keyword
@@ -74,21 +91,24 @@ class Navigation extends Component {
         const {data} = getSessionStorage("SelectedNavOntology") || {"data": "Stories"};
         // no keyword loaded
         if (this.props.searchState.inputValue === "") {
-            // go to the loaded ontology from session storage
-            this.handleLevelTwoClick(data);
-            if (this.TINav.includes(data)) {
-                // get previous dropdown info
-                const prevDropdowns = getSessionStorage("dropdownLists");
-                // only if something to load
-                if (prevDropdowns) {
-                    if (prevDropdowns.length === 1) {
-                        // genre or ETK to load
-                        this.selectMenu(prevDropdowns[0], false);
-                    } else if (prevDropdowns.length === 2) {
-                        // tango double-dropdown to load
-                        this.selectMenu(prevDropdowns[0], true);
-                        if (prevDropdowns[1]) {
-                            this.selectMenu(prevDropdowns[1], false);
+            // populate center list (always — Redux displayList resets on page reload)
+            // skip if Macroscope tab is active (it has no center list)
+            if (!this.state.macroscopeView) {
+                this.handleLevelTwoClick(data);
+                if (this.TINav.includes(data)) {
+                    // get previous dropdown info
+                    const prevDropdowns = getSessionStorage("dropdownLists");
+                    // only if something to load
+                    if (prevDropdowns) {
+                        if (prevDropdowns.length === 1) {
+                            // genre or ETK to load
+                            this.selectMenu(prevDropdowns[0], false);
+                        } else if (prevDropdowns.length === 2) {
+                            // tango double-dropdown to load
+                            this.selectMenu(prevDropdowns[0], true);
+                            if (prevDropdowns[1]) {
+                                this.selectMenu(prevDropdowns[1], false);
+                            }
                         }
                     }
                 }

@@ -3,31 +3,28 @@ import PropTypes from "prop-types";
 
 class Navigation extends Component {
     handleDropdownChange({target}) {
+        const items = this.props.list.list;
+        if (!items) return;
         let selectedItem;
         if (this.props.list.tango) {
-            selectedItem = this.props.list.list.find((item) =>
-                item === target.value);
+            selectedItem = items.find((item) => item === target.value);
         } else {
-            selectedItem = this.props.list.list.find((item) =>
+            selectedItem = items.find((item) =>
                 item[this.props.list.displayKey] === target.value);
         }
         this.props.handleMenuSelect(selectedItem, this.props.list.tango);
     }
 
     optionsRender() {
+        const items = this.props.list.list;
+        if (!items) return null;
         if (this.props.list.tango) {
-            return this.props.list.list.map((item, i) => (
-                <option
-                    key={i}
-                    value={item}>
-                    {item}
-                </option>
+            return items.map((item, i) => (
+                <option key={i} value={item}>{item}</option>
             ));
         } else {
-            return this.props.list.list.map((item, i) => (
-                <option
-                    key={i}
-                    value={item[this.props.list.displayKey]}>
+            return items.map((item, i) => (
+                <option key={i} value={item[this.props.list.displayKey]}>
                     {item[this.props.list.displayKey]}
                 </option>
             ));

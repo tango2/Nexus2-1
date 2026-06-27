@@ -45,7 +45,8 @@
   },
   "homepage": "http://etkspace.scandinavian.ucla.edu/folklorenexus",
   "devDependencies": {
-    "json-loader": "^0.5.7"
+    "json-loader": "^0.5.7",
+    "playwright": "^1.61.1"
   },
   "browserslist": [
     ">0.2%",

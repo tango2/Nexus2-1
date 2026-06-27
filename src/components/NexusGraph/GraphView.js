@@ -3,7 +3,7 @@ import React, {Component} from "react";
 // styling for the buttons
 import "./GraphView.css";
 // functions to get nodes + links
-import {getNodeById, initializeGraph, initializeNodeCategories} from "./NexusGraphModel";
+import {getNodeById, initializeGraph, initializeNodeCategories, clearGraph} from "./NexusGraphModel";
 // the actual graph
 import NexusGraph from "./NexusGraph";
 // prop validation
@@ -176,6 +176,19 @@ class GraphView extends Component {
         } else {
             return "circle lightgrey";
         }
+    }
+
+    /**
+     * Wipe all nodes and edges, resetting the graph to a blank state.
+     */
+    clearGraph() {
+        const {blankGraph, blankCategories} = clearGraph();
+        this.setState({
+            "data": blankGraph,
+            "nodeCategories": blankCategories,
+            "lastClickedNode": {"id": "Blank"},
+            "showMenu": false,
+        });
     }
 
     /**
@@ -467,6 +480,11 @@ class GraphView extends Component {
                             e.preventDefault();
                             this.createCSVFiles.bind(this)()}}>
                             Download graph
+                        </button>
+                        <button className="tool button alert" onClick={(e) => {
+                            e.preventDefault();
+                            this.clearGraph.bind(this)()}}>
+                            Clear graph
                         </button>
                     </div>
 

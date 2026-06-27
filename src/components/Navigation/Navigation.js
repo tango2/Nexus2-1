@@ -9,6 +9,7 @@ import {
 // functions to get nodes + links
 import {
     addNode,
+    clearGraph,
     initializeGraph,
     initializeNodeCategories,
 } from "../NexusGraph/NexusGraphModel";
@@ -39,6 +40,8 @@ class Navigation extends React.Component {
             "fromSelect": false,
             "toSelect": false,
             "timeFilterLoad": false,
+            // bumping this forces the mini-graph to remount with cleared data
+            "graphKey": 0,
         };
         // ref to the map for updating
         this.map = React.createRef();
@@ -313,27 +316,29 @@ class Navigation extends React.Component {
                     <div className="medium-6 cell">
                         {/* button that creates + opens the graph tab when clicked */}
                         <button
-                            // blue button styling
                             className="button primary"
-                            // just space it out properly in the CSS
                             id="expandGraphButton"
-                            // when clicked, open the graph in its own tab
                             onClick={() => {
                                 addTab(0, "Nexus Graph", "Graph");
                             }}>
                             Open Graph in New Tab
                         </button>
-                        {/* the nexus graph */}
+                        <button
+                            className="button alert"
+                            id="clearGraphButton"
+                            onClick={() => {
+                                clearGraph();
+                                this.setState(prev => ({"graphKey": prev.graphKey + 1}));
+                            }}>
+                            Clear Graph
+                        </button>
+                        {/* the nexus graph — key forces remount when graph is cleared */}
                         <NexusGraph
-                            // nodes + links for the graph to render
+                            key={this.state.graphKey}
                             data={initializeGraph()}
-                            // a totality of all the nodes, sorted by type
                             nodes={initializeNodeCategories()}
-                            // custom settings for the graph
                             settings={{
-                                // set the height to center the graph
                                 "height": window.innerHeight * 0.8 * 0.47,
-                                // set the width to center the graph
                                 "width": window.innerWidth * 0.8 * 0.389,
                             }} />
                     </div>
