@@ -1,79 +1,114 @@
 [
     {
-        "name": "1. Introduction",
+        "name": "Preface and Acknowledgements",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 0,
-        "location": "chap_01/index_split_000.html"
+        "location": ""
+    },
+    {
+        "name": "1. Introduction",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 1,
+        "location": ""
     },
     {
         "name": "2. The Rise of Folklore Scholarship",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 1,
-        "location": "chap_02/index_split_000.html"
+        "id": 2,
+        "location": ""
     },
     {
-        "name": "3. Evald Tang Kristensen's Life and Work",
+        "name": "3. Evald Tang Kristensen's Life and Works",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 2,
-        "location": "chap_03/index_split_000.html"
+        "id": 3,
+        "location": ""
     },
     {
         "name": "4. Folklore Genres",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 3,
-        "location": "chap_04/index_split_000.html"
+        "id": 4,
+        "location": ""
     },
     {
         "name": "5. Mapping Folklore",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 4,
-        "location": "chap_05/index_split_000.html"
+        "id": 5,
+        "location": ""
     },
     {
         "name": "6. Repertoire and the Individual",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 5,
-        "location": "chap_06/index_split_000.html"
-    },
-    {
-        "name": "7. 'Bitte Jens' Kristensen: Cobbled Together",
-        "url": "/Book/merge_from_ofoct.epub",
-        "submenu": [],
         "id": 6,
-        "location": "chap_07/index_split_000.html"
+        "location": ""
     },
     {
-        "name": "8. Kirsten Marie Pedersdatter: Between Farms and Smallholding",
+        "name": "7. “Bitte Jens” Kristensen: Cobbled Together",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
         "id": 7,
-        "location": "chap_08/index_split_000.html"
+        "location": ""
+    },
+    {
+        "name": "8. Kirsten Marie Pedersdatter: Between Farm and Smallholding",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 8,
+        "location": ""
     },
     {
         "name": "9. Jens Peter Pedersen: Day Laborer and Turner",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 8,
-        "location": "chap_09/index_split_000.html"
+        "id": 9,
+        "location": ""
     },
     {
-        "name": "10. Ane Margrete Jensdatter: Old Age and Rural Poverty",
+        "name": "10. (Ane) Margrete Jensdatter: Old Age and Rural Poverty",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 9,
-        "location": "chap_10/index_split_000.html"
+        "id": 10,
+        "location": ""
     },
     {
         "name": "11. Peder Johansen: Miller, Fiddler, Bachelor Storyteller",
         "url": "/Book/merge_from_ofoct.epub",
         "submenu": [],
-        "id": 10,
-        "location": "chap_11/index_split_000.html"
+        "id": 11,
+        "location": ""
+    },
+    {
+        "name": "Evald Tang Kristensen's Published Works",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 12,
+        "location": ""
+    },
+    {
+        "name": "Bibliography",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 13,
+        "location": ""
+    },
+    {
+        "name": "Abbreviations and Measurements",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 14,
+        "location": ""
+    },
+    {
+        "name": "How to Cite",
+        "url": "/Book/merge_from_ofoct.epub",
+        "submenu": [],
+        "id": 15,
+        "location": ""
     }
 ]

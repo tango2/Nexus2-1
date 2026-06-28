@@ -22,6 +22,9 @@ class HelpView extends React.Component {
                 "Search Features",
                 "Macroscope Tools",
             ],
+            [
+                "How to Cite",
+            ],
         ];
     }
 
@@ -451,6 +454,49 @@ class HelpView extends React.Component {
                         </p>
                     </div>}
 
+                    {/* ── 6: HOW TO CITE ── */}
+                    {activeView === 6 && <div>
+                        <h1>How to Cite</h1>
+
+                        <h2>Citing the ETK Danish Folklore Nexus</h2>
+                        <p>
+                            Tangherlini, Timothy R., Pete Broadwell, and Daniel Huang.
+                            <em> ETK Danish Folklore Nexus</em>. UCLA, 2024.{" "}
+                            <a href="http://etkspace.scandinavian.ucla.edu/folklorenexus" target="_blank" rel="noopener noreferrer">
+                                http://etkspace.scandinavian.ucla.edu/folklorenexus
+                            </a>
+                        </p>
+
+                        <h2>Citing the Companion Book</h2>
+                        <p>
+                            Tangherlini, Timothy R.{" "}
+                            <em>Danish Folktales, Legends and Other Stories</em>.
+                            Seattle: University of Washington Press, 2013.
+                        </p>
+
+                        <h2>Citing an Individual Story</h2>
+                        <p>
+                            Stories in the Nexus are identified by their publication reference
+                            (e.g., <code>DS_II_D_5</code>). To cite a specific story, use the
+                            publication reference shown in the Story View header, together with
+                            the collection it comes from:
+                        </p>
+                        <p>
+                            Kristensen, Evald Tang. <em>[Collection title]</em>, [volume/number].
+                            Story <code>[publication reference]</code>. Transcribed and translated
+                            in Tangherlini, Timothy R. <em>Danish Folktales, Legends and Other
+                            Stories</em>. Seattle: University of Washington Press, 2013.
+                        </p>
+
+                        <h2>Abbreviations</h2>
+                        <p>
+                            Publication references use standard abbreviations for ETK's collected
+                            volumes. A full key to all abbreviations used in the Nexus is available
+                            in the <strong>Abbreviations and Measurements</strong> section of the
+                            companion book (accessible via the Book tab, Table of Contents).
+                        </p>
+                    </div>}
+
                     <div className="clearfix">
                         {activeView > 0 && (() => {
                             const prev = activeView - 1;
@@ -464,7 +510,7 @@ class HelpView extends React.Component {
                                 </button>
                             );
                         })()}
-                        {activeView < 5 && (() => {
+                        {activeView < 6 && (() => {
                             const next = activeView + 1;
                             const row = Math.floor(next / 3);
                             const col = next % 3;

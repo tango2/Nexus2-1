@@ -14,11 +14,11 @@ import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
 
 const PersonIDToChapterID = {
-    150: 6,  // Bitte Jens Kristensen
-    235: 7,  // Kirsten Marie Pedersdatter
-    241: 8,  // Jens Peter Pedersen
-    90:  9,  // Ane Margrete Jensdatter
-    123: 10, // Peder Johansen
+    150: 7,  // Bitte Jens Kristensen
+    235: 8,  // Kirsten Marie Pedersdatter
+    241: 9,  // Jens Peter Pedersen
+    90:  10, // Ane Margrete Jensdatter
+    123: 11, // Peder Johansen
 };
 
 class PeopleView extends Component {
