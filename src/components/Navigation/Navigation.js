@@ -44,17 +44,75 @@ class Navigation extends React.Component {
             "timeFilterLoad": false,
             // bumping this forces the mini-graph to remount with cleared data
             "graphKey": 0,
+            // live-filter text typed above the center list (Places/People/Stories)
+            "typeaheadQuery": "",
         };
         // ref to the map for updating
         this.map = React.createRef();
         // bind functions so that they can be used as callbacks
         this.timeInputClickHandler = this.timeInputClickHandler.bind(this);
         this.timeInputEnd = this.timeInputEnd.bind(this);
+        this.handleTypeaheadChange = this.handleTypeaheadChange.bind(this);
     }
 
     componentDidMount() {
         setTimeout(this.setState({timeFilterLoad: true}), 1000)
         // this.setState({timeFilterLoad:true});
+    }
+
+    componentDidUpdate(prevProps) {
+        // clear the typeahead filter whenever the underlying list switches to a
+        // different ontology (e.g. nav tab change, keyword search, dropdown pick),
+        // since a leftover query almost never matches the new entity type's fields
+        const prevList = prevProps.navigatorState.displayList,
+            currList = this.props.navigatorState.displayList;
+        if (prevList !== currList && this.state.typeaheadQuery !== "") {
+            const prevOntology = prevList.length > 0 ? DisplayArtifactToOntology(prevList[0]) : null,
+                currOntology = currList.length > 0 ? DisplayArtifactToOntology(currList[0]) : null;
+            if (prevOntology !== currOntology) {
+                this.setState({"typeaheadQuery": ""});
+            }
+        }
+    }
+
+    /**
+     * Filter a display list down to items matching the typeahead query.
+     * Matches are a case-insensitive prefix match against the field(s)
+     * relevant to the list's ontology (place name; person first/last name;
+     * story publication info).
+     * @param {Array} list Items to filter
+     * @param {String} ontology Ontology of the list ("Places", "People", "Stories")
+     * @param {String} query Typed filter text
+     * @returns {Array} Filtered items
+     */
+    filterByTypeahead(list, ontology, query) {
+        const q = query.trim().toLowerCase();
+        if (q === "") {
+            return list;
+        }
+        // some records have non-string values in these fields (e.g. a stray
+        // boolean from an XML-to-JSON conversion glitch), so coerce defensively
+        const asPrefixMatch = (value) => typeof value === "string" && value.toLowerCase().startsWith(q);
+        switch (ontology) {
+            case "Places":
+                return list.filter((item) => asPrefixMatch(item.name));
+            case "People":
+                return list.filter((item) =>
+                    asPrefixMatch(item.first_name) ||
+                    asPrefixMatch(item.last_name));
+            case "Stories":
+                return list.filter((item) => asPrefixMatch(item.publication_info));
+            default:
+                return list;
+        }
+    }
+
+    /**
+     * Update the typeahead query as the user types
+     * @param {Event} event Change event from the typeahead input
+     */
+    handleTypeaheadChange(event) {
+        this.setState({"typeaheadQuery": event.target.value});
     }
 
     /**
@@ -211,6 +269,14 @@ class Navigation extends React.Component {
         } = this.props;
         // variable to store the main, center display
         let toDisplay;
+        // ontology of whatever is currently populating the center list, if any
+        const listOntology = displayList.length > 0 ? DisplayArtifactToOntology(displayList[0]) : null,
+            // only Places/People/Stories have fields worth typing ahead on
+            showTypeahead = ["Places", "People", "Stories"].includes(listOntology),
+            // narrow the list down to items matching the typed query (no-op if empty)
+            filteredDisplayList = showTypeahead ?
+                this.filterByTypeahead(displayList, listOntology, this.state.typeaheadQuery) :
+                displayList;
         // based on what is currently being viewed
         switch (this.state.displayLabel) {
             // if the user is viewing the ETK Index but hasn't selected anything yet
@@ -251,8 +317,15 @@ class Navigation extends React.Component {
                             onClick={() => {
                                 addTab(0, "Fieldtrip Tool", "FieldtripTool");
                             }}>Open Fieldtrip Viewer</button>}
+                    {showTypeahead &&
+                        <input
+                            className="navTypeahead"
+                            type="text"
+                            placeholder={`Type ahead to find a ${listOntology === "People" ? "person" : listOntology.slice(0, -1).toLowerCase()}…`}
+                            value={this.state.typeaheadQuery}
+                            onChange={this.handleTypeaheadChange} />}
                     <FilterChips />
-                    {this.displayList(displayList)}
+                    {this.displayList(filteredDisplayList)}
                 </div>;
                 break;
         }
