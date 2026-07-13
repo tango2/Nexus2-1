@@ -222,7 +222,19 @@ class MapView extends React.Component {
                     }}
                     // onClick={this.handleClick.bind(this, place, name)}
                 >
-                    <Popup>{name}</Popup>
+                    {/* keyboard users can Tab to the (natively focusable) Leaflet marker,
+                        press Enter to open this popup, then activate this button —
+                        double-click on the marker itself has no keyboard equivalent */}
+                    <Popup>
+                        <button
+                            type="button"
+                            className="map-popup-open"
+                            onClick={() => {
+                                this.props.actions.addTab(place.place_id, name, "Places");
+                            }}>
+                            {name}
+                        </button>
+                    </Popup>
                 </Marker>
             );
         } else {

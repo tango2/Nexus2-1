@@ -19,12 +19,18 @@ class Home extends Component {
     render() {
         return (
             <div className="Home grid-y medium-grid-frame full">
+                {/* lets keyboard users jump past the header straight to the tab content */}
+                <a className="skip-link" href="#main-content">Skip to main content</a>
                 {/* without nested div, the Book View gets mega-compressed */}
                 <div>
                     {/* Top banner with flag + title on left, book icon on right */}
-                    <Heading />
+                    <header>
+                        <Heading />
+                    </header>
                     {/* Everything else on the page */}
-                    <TabViewer />
+                    <main id="main-content">
+                        <TabViewer />
+                    </main>
                 </div>
             </div>
         );

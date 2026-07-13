@@ -1,13 +1,11 @@
-/* for any text that needs to be light green */
+/* darkened from lightgreen (1.36:1) to meet WCAG 1.4.3 4.5:1 minimum on white/#fafafa */
 .lightgreen {
-    /* light green text color */
-    color: lightgreen;
+    color: #2E7D32;
 }
 
-/* for any text that needs to be light blue */
+/* darkened from lightblue (1.46:1) to meet WCAG 1.4.3 4.5:1 minimum on white/#fafafa */
 .lightblue {
-    /* light blue text color */
-    color: lightblue;
+    color: #0059B3;
 }
 
 /* styling for the filter portion */
@@ -38,13 +36,19 @@
 .legend tr td, .legend thead tr th{
     text-align:center;
 }
-.circle{
+/* base swatch box; shape-* modifiers below determine its outline so node type
+   isn't conveyed by color alone (WCAG 1.4.1), matching each node's graph symbolType */
+.node-swatch {
     height:2vh;
     width:2vh;
-    border-radius:100%;
     display:block;
     margin:auto;
 }
+.node-swatch.shape-circle { border-radius: 100%; }
+.node-swatch.shape-square { border-radius: 0; }
+.node-swatch.shape-diamond { border-radius: 0; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.node-swatch.shape-triangle { border-radius: 0; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+
 .red{background:red;}
 .blue{background:blue;}
 .green{background:green;}
@@ -62,6 +66,11 @@
 
 .legend-table-body:hover {
     cursor: pointer;
+}
+
+.legend-table-body tr:focus-visible {
+    outline: 2px solid #0081C6;
+    outline-offset: -2px;
 }
 
 .download {
@@ -133,4 +142,43 @@
     margin-right: auto;
     margin-top: 10px;
     width: 90%;
+}
+
+/* keyboard/screen-reader alternative to the mouse-only graph canvas */
+.accessible-node-list {
+    margin: 10px 5px;
+    max-height: 30vh;
+    overflow-y: auto;
+    font-size: .85em;
+}
+
+.accessible-node-list summary {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 0;
+}
+
+.accessible-node-list h4 {
+    margin: 8px 0 4px;
+    font-size: 1em;
+}
+
+.accessible-node-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.accessible-node-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 0;
+}
+
+.node-list-action {
+    margin: 0;
+    padding: 2px 8px;
+    font-size: .85em;
 }

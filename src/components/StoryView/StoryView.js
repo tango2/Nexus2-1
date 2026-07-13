@@ -78,14 +78,23 @@ class StoryView extends Component {
                     {arrayTransformation(stories_mentioned.story).map((story, i) => {
                         // get its id, display name
                         const {story_id, full_name} = story;
+                        const open = () => {
+                            // add the story as a node on the graph
+                            addNode(story_id, full_name, "Stories", story);
+                            // open up the story in a new tab
+                            this.props.actions.addTab(story_id, full_name, "Stories");
+                        };
                         return <li
                             key={i}
                             className="associated-items"
-                            onClick={() => {
-                                // add the story as a node on the graph
-                                addNode(story_id, full_name, "Stories", story);
-                                // open up the story in a new tab
-                                this.props.actions.addTab(story_id, full_name, "Stories");
+                            role="button"
+                            tabIndex={0}
+                            onClick={open}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault();
+                                    open();
+                                }
                             }}>
                             {full_name}
                         </li>;
@@ -175,6 +184,35 @@ class StoryView extends Component {
         });
     }
 
+    /**
+     * Render one keyboard-operable story-version selector button
+     * @param {Number} index Story version index (see indexToVersion)
+     * @param {String} label Visible label for the button
+     * @param {Object} [extraStyle] Optional inline style override
+     * @returns {JSX} The rendered selector
+     */
+    renderVersionTab(index, label, extraStyle) {
+        const {storyVersionOpen} = this.state;
+        const toggle = () => this.storyViewerClickHandler(index);
+        return (
+            <li
+                className={`button ${!storyVersionOpen[index] && "secondary"}`}
+                role="button"
+                tabIndex={0}
+                aria-pressed={storyVersionOpen[index]}
+                style={extraStyle}
+                onClick={toggle}
+                onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        toggle();
+                    }
+                }}>
+                {label}
+            </li>
+        );
+    }
+
     renderProperty(property) {
         // if the property is defined, that should be displayed, otherwise not applicable
         return property || "N/A";
@@ -257,12 +295,14 @@ class StoryView extends Component {
                         </button>
                         <ul className="accordion" data-accordian>
                             <li className={`accordion-item ${openTab === 0 && "is-active"}`}>
-                                <a
+                                <button
+                                    type="button"
                                     className="accordion-title"
+                                    aria-expanded={openTab === 0}
                                     onClick={() => {
                                         // when clicked, toggle the top tab
                                         this.accordionHandler(0);
-                                    }}>Story Data</a>
+                                    }}>Story Data</button>
                                 {/* only show story data if that is the open accordion tab */}
                                 {openTab === 0 &&
                                     <div className="body">
@@ -330,12 +370,14 @@ class StoryView extends Component {
                                     </div>}
                             </li>
                             <li className={`accordion-item ${openTab === 1 && "is-active"}`}>
-                                <a
+                                <button
+                                    type="button"
                                     className="accordion-title"
+                                    aria-expanded={openTab === 1}
                                     // when clicked, toggle the middle tab
                                     onClick={this.accordionHandler.bind(this, 1)}>
                                     Story Indices
-                                </a>
+                                </button>
                                 {/* only show indices if that is the open accordion tab */}
                                 {openTab === 1 &&
                                     <div className="body">
@@ -384,12 +426,14 @@ class StoryView extends Component {
                                     </div>}
                             </li>
                             <li className={`accordion-item ${openTab === 2 && "is-active"}`}>
-                                <a
+                                <button
+                                    type="button"
                                     className="accordion-title"
+                                    aria-expanded={openTab === 2}
                                     // when clicked, toggle the bottom tab
                                     onClick={this.accordionHandler.bind(this, 2)}>
                                     Bibliographical References
-                                </a>
+                                </button>
                                 {/* only show references if that is the open tab */}
                                 {openTab === 2 &&
                                     <div className="body">
@@ -407,10 +451,19 @@ class StoryView extends Component {
                                 }} alt="story icon" />
                             {full_name}
                         </h2>
-                        <h4 className="name-header" style={{"marginLeft": "1.5%"}}>{informant_full_name}</h4>
+                        <h3 className="name-header" style={{"marginLeft": "1.5%"}}>{informant_full_name}</h3>
                         <div className="font-control">
-                            <div className="button secondary" style={{"marginLeft": "1.5%"}} onClick={(e) => {e.preventDefault(); this.increaseFontSize.bind(this)()}}>A</div>
-                            <div className="button secondary" onClick={(e) => { e.preventDefault(); this.decreaseFontSize.bind(this)() }}>a</div>
+                            <button
+                                type="button"
+                                className="button secondary"
+                                aria-label="Increase text size"
+                                style={{"marginLeft": "1.5%"}}
+                                onClick={(e) => {e.preventDefault(); this.increaseFontSize.bind(this)()}}>A</button>
+                            <button
+                                type="button"
+                                className="button secondary"
+                                aria-label="Decrease text size"
+                                onClick={(e) => { e.preventDefault(); this.decreaseFontSize.bind(this)() }}>a</button>
                         </div>
                         <div className="grid-x" style={{float: "left"}}>
                             <div className="medium-11 cell">
@@ -418,26 +471,11 @@ class StoryView extends Component {
                                     <div className="story-viewer cell grid-y">
                                         <ul className="button-group story-viewer-options">
                                             {/* make the button secondary if that story version is not open */}
-                                            <li className={`button ${!storyVersionOpen[0] && "secondary"}`}
-                                                onClick={this.storyViewerClickHandler.bind(this, 0)}>
-                                                English Published Version
-                                            </li>
-                                            <li className={`button ${!storyVersionOpen[1] && "secondary"}`}
-                                                onClick={this.storyViewerClickHandler.bind(this, 1)}>
-                                                English ms Translation
-                                            </li>
-                                            <li className={`button ${!storyVersionOpen[2] && "secondary"}`}
-                                                onClick={this.storyViewerClickHandler.bind(this, 2)}>
-                                                Danish Published Version
-                                            </li>
-                                            <li className={`button ${!storyVersionOpen[3] && "secondary"}`}
-                                                onClick={this.storyViewerClickHandler.bind(this, 3)}>
-                                                Danish ms Transcription
-                                            </li>
-                                            <li className={`button ${!storyVersionOpen[4] && "secondary"}`}
-                                                onClick={this.storyViewerClickHandler.bind(this, 4)}>
-                                                Manuscript Pages
-                                            </li>
+                                            {this.renderVersionTab(0, "English Published Version")}
+                                            {this.renderVersionTab(1, "English ms Translation")}
+                                            {this.renderVersionTab(2, "Danish Published Version")}
+                                            {this.renderVersionTab(3, "Danish ms Transcription")}
+                                            {this.renderVersionTab(4, "Manuscript Pages")}
                                         </ul>
                                         <div className="grid-x medium-2">
                                             {/* only render the active story versions */}
@@ -504,29 +542,11 @@ class StoryView extends Component {
                             {/* only render the active story versions */}
                             <ul className="button-group story-viewer-options">
                                 {/* make the button secondary if that story version is not open */}
-                                <li className={`button ${!storyVersionOpen[0] && "secondary"}`}
-                                    onClick={this.storyViewerClickHandler.bind(this, 0)} style={{
-                                        "marginLeft": "5px",
-                                    }}>
-                                    English Published
-                                </li>
-                                <li className={`button ${!storyVersionOpen[1] && "secondary"}`}
-                                    onClick={this.storyViewerClickHandler.bind(this, 1)}>
-                                    English Translation
-                                </li>
-                                {/* make the button secondary if that story version is not open */}
-                                <li className={`button ${!storyVersionOpen[2] && "secondary"}`}
-                                    onClick={this.storyViewerClickHandler.bind(this, 2)}>
-                                    Danish Published
-                                </li>
-                                <li className={`button ${!storyVersionOpen[3] && "secondary"}`}
-                                    onClick={this.storyViewerClickHandler.bind(this, 3)}>
-                                    Danish Transcription
-                                </li>
-                                <li className={`button ${!storyVersionOpen[4] && "secondary"}`}
-                                    onClick={this.storyViewerClickHandler.bind(this, 4)}>
-                                    Manuscript Pages
-                                </li>
+                                {this.renderVersionTab(0, "English Published", {"marginLeft": "5px"})}
+                                {this.renderVersionTab(1, "English Translation")}
+                                {this.renderVersionTab(2, "Danish Published")}
+                                {this.renderVersionTab(3, "Danish Transcription")}
+                                {this.renderVersionTab(4, "Manuscript Pages")}
                             </ul>
                             <div className="grid-x">
                                 {/* only render the active story versions */}

@@ -51,6 +51,8 @@
 
 .home-tab:hover    { background-color: #005f94; }
 .home-tab.active   { background-color: #004a73; box-shadow: inset 0 -2px 0 white; }
+.home-tab:focus-visible { outline: 2px solid #ffd400; outline-offset: -2px; }
+.tabs li:focus-visible   { outline: 2px solid #0081C6; outline-offset: -2px; }
 
 /* ── Scroll arrow buttons ── */
 .tab-scroll-btn {
@@ -117,22 +119,40 @@
     min-width: 0;
 }
 
-/* Icons are in-flow flex items */
+/* Icon buttons: reset default button chrome, icons are in-flow flex items */
+.pinTabIcon-btn,
+.closeTabIcon-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
 .closeTabIcon {
     flex-shrink: 0;
     width: .75em;
-    cursor: pointer;
 }
 
 .pinTabIcon {
     flex-shrink: 0;
     width: 1em;
-    cursor: pointer;
 }
 
-.closeTabIcon:hover {
+.closeTabIcon-btn:hover .closeTabIcon,
+.closeTabIcon-btn:focus-visible .closeTabIcon {
     outline: 1px solid black;
     border-radius: 100%;
+}
+
+.pinTabIcon-btn:focus-visible,
+.closeTabIcon-btn:focus-visible {
+    outline: 2px solid #0081C6;
+    outline-offset: 1px;
 }
 
 .associated-items { cursor: pointer; }

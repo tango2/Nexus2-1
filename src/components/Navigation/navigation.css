@@ -91,7 +91,8 @@ and (min-height: 1024px){
     margin-left: 2.6em;
     margin-top: 1px;
     font-size: 0.75em;
-    color: #888;
+    /* darkened from #888 (3.54:1) to meet WCAG 1.4.3 4.5:1 minimum on #f9f9f9 */
+    color: #616161;
     font-style: italic;
 }
 
@@ -111,7 +112,13 @@ and (min-height: 1024px){
 .story-etk {
     display: block;
     font-size: 0.70em;
-    color: #888;
+    /* darkened from #888 (3.54:1) to meet WCAG 1.4.3 4.5:1 minimum on #f9f9f9 */
+    color: #616161;
+}
+
+.AssociatedStoriesViewer ul.book li:focus-visible {
+    outline: 2px solid #0081C6;
+    outline-offset: 2px;
 }
 
 .convo-icon, .person-icon, .location-icon, .fieldtrip-icon {
@@ -169,7 +176,6 @@ and (min-height: 1024px){
     -webkit-appearance: none;  /* Override default CSS styles */
     height: 25px; /* Specified height */
     background: #d3d3d3; /* Grey background */
-    outline: none; /* Remove outline */
     opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
     -webkit-transition: .2s; /* 0.2 seconds transition on hover */
     transition: opacity .2s;
@@ -178,6 +184,11 @@ and (min-height: 1024px){
 /* Mouse-over effects */
 .slider:hover {
     opacity: 1; /* Fully shown on mouse-over */
+}
+
+.slider:focus-visible {
+    outline: 2px solid #0081C6;
+    outline-offset: 2px;
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */

@@ -47,6 +47,41 @@ class RightBar extends Component {
     }
 
     /**
+     * Renders one of the left-side section-select controls (People/Places/Stories/etc.)
+     * @param {String} section Section key this control activates
+     * @param {String} activeSection Currently active section key
+     * @param {String} extraClassName Extra class name matching the section (for existing CSS hooks)
+     * @param {*} iconSrc Icon image source
+     * @param {String} iconAlt Alt text for the icon (decorative — label carries the meaning)
+     * @param {String} label Visible + accessible label for the control
+     * @returns {JSX} The rendered control
+     */
+    renderControlButton(section, activeSection, extraClassName, iconSrc, iconAlt, label) {
+        const activate = (e) => {
+            e.preventDefault();
+            this.PPSClickHandler(section);
+        };
+        return (
+            <div
+                className={`medium-2 cell ${activeSection === section ? "active" : ""} ${extraClassName}`}
+                role="button"
+                tabIndex={0}
+                aria-pressed={activeSection === section}
+                aria-label={label}
+                onClick={activate}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        activate(e);
+                    }
+                }}>
+                <img src={iconSrc} className="icon" alt="" />
+                <br />
+                <div className="icon-label">{label}</div>
+            </div>
+        );
+    }
+
+    /**
      * Renders the left buttons that control which part of the bar to see
      * @returns {JSX} The rendered controls
      */
@@ -59,153 +94,33 @@ class RightBar extends Component {
         switch (view) {
             // if the current view is a place, then create tabs for people, stories that mentioned it, and stories collected
             case "Places":
-                // first <div> is the people tab
-                // second <div> is the stories that mention it tab
-                // third <div> is the stories collected tab
+                // first control is the people tab, second is stories that mention it, third is stories collected
                 return (<div style={{"marginTop": "150%", "marginBottom": "20%"}}>
-                    <div className={`medium-2 cell ${active === "people" ? "active" : ""} bio`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("people");
-                        }}>
-                        <img src={require("../Navigation/icons8-contacts-64_white.png")}
-                            className="icon"
-                            alt="person" />
-                        <br />
-                        <div className="icon-label">People</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "stories_mentioned" ? "active" : ""} stories-mentioned`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("stories_mentioned");
-                        }}>
-                        <img src={require("../Navigation/icons8-chat-50_white.png")}
-                            className="icon"
-                            alt="stories" />
-                        <br />
-                        <div className="icon-label">Stories That Mention</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "stories" ? "active" : ""} stories`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("stories");
-                        }}>
-                        <img src={require("../Navigation/icons8-chat-50_white.png")}
-                            className="icon"
-                            alt="stories" />
-                        <br />
-                        <div className="icon-label">Stories Collected</div>
-                    </div>
+                    {this.renderControlButton("people", active, "bio", require("../Navigation/icons8-contacts-64_white.png"), "person", "People")}
+                    {this.renderControlButton("stories_mentioned", active, "stories-mentioned", require("../Navigation/icons8-chat-50_white.png"), "stories", "Stories That Mention")}
+                    {this.renderControlButton("stories", active, "stories", require("../Navigation/icons8-chat-50_white.png"), "stories", "Stories Collected")}
                 </div>);
             case "Stories": {
                 // if the current view is a story, then create tabs for author, places, and stories
                 const {informant_first_name, informant_last_name} = this.props.object;
-                // first <div> is the author tab
-                // second <div> is the places tab
-                // third <div> is the stories tab
                 return (<div style={{"marginTop": "150%", "marginBottom": "20%"}}>
-                    <div className={`medium-2 cell ${active === "people" ? "active" : ""} bio`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("bio");
-                        }}>
-                        <img src={require("../Navigation/icons8-contacts-64_white.png")}
-                            className="icon"
-                            alt="person" />
-                        <br />
-                        <div className="icon-label">{informant_first_name} {informant_last_name}</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "places" ? "active" : ""} places`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("places");
-                        }}>
-                        <img src={require("../Navigation/icons8-marker-64_white.png")}
-                            className="icon"
-                            alt="location" />
-                        <br />
-                        <div className="icon-label">Places</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "stories" ? "active" : ""} stories`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("stories");
-                        }}>
-                        <img src={require("../Navigation/icons8-chat-50_white.png")}
-                            className="icon"
-                            alt="stories" />
-                        <br />
-                        <div className="icon-label">Stories</div>
-                    </div>
+                    {this.renderControlButton("bio", active, "bio", require("../Navigation/icons8-contacts-64_white.png"), "person", `${informant_first_name} ${informant_last_name}`)}
+                    {this.renderControlButton("places", active, "places", require("../Navigation/icons8-marker-64_white.png"), "location", "Places")}
+                    {this.renderControlButton("stories", active, "stories", require("../Navigation/icons8-chat-50_white.png"), "stories", "Stories")}
                 </div>);
             }
             case "People":
                 // if the current view is a person, then create tabs for places and stories
-                // first <div> is the places tab
-                // second <div> is the stories tab
                 return (<div style={{"marginTop": "150%", "marginBottom": "20%"}}>
-                    <div className={`medium-2 cell ${active === "places" ? "active" : ""} places`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("places");
-                        }}>
-                        <img src={require("../Navigation/icons8-marker-64_white.png")}
-                            className="icon"
-                            alt="location" />
-                        <br />
-                        <div className="icon-label">Places</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "stories" ? "active" : ""} stories`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("stories");
-                        }}>
-                        <img src={require("../Navigation/icons8-contacts-64_white.png")}
-                            className="icon"
-                            alt="stories" />
-                        <br />
-                        <div className="icon-label">Stories</div>
-                    </div>
+                    {this.renderControlButton("places", active, "places", require("../Navigation/icons8-marker-64_white.png"), "location", "Places")}
+                    {this.renderControlButton("stories", active, "stories", require("../Navigation/icons8-contacts-64_white.png"), "stories", "Stories")}
                 </div>);
             case "Fieldtrips":
                 // if the current view is a fieldtrip, then create tabs for people visited, places visited, and stories collected
-                // first <div> is the people visited tab
-                // second <div> is the places visited tab
-                // third <div> is the stories collected tab
                 return (<div style={{"marginTop": "150%", "marginBottom": "20%"}}>
-                    <div className={`medium-2 cell ${active === "people" ? "active" : ""} bio`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("people");
-                        }}>
-                        <img src={require("../Navigation/icons8-contacts-64_white.png")}
-                            className="icon"
-                            alt="person" />
-                        <br />
-                        <div className="icon-label">People</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "places" ? "active" : ""} places`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("places");
-                        }}>
-                        <img src={require("../Navigation/icons8-marker-64_white.png")}
-                            className="icon"
-                            alt="location" />
-                        <br />
-                        <div className="icon-label">Places</div>
-                    </div>
-                    <div className={`medium-2 cell ${active === "stories" ? "active" : ""} stories`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            this.PPSClickHandler.bind(this)("stories");
-                        }}>
-                        <img src={require("../Navigation/icons8-chat-50_white.png")}
-                            className="icon"
-                            alt="stories" />
-                        <br />
-                        <div className="icon-label">Stories</div>
-                    </div>
+                    {this.renderControlButton("people", active, "bio", require("../Navigation/icons8-contacts-64_white.png"), "person", "People")}
+                    {this.renderControlButton("places", active, "places", require("../Navigation/icons8-marker-64_white.png"), "location", "Places")}
+                    {this.renderControlButton("stories", active, "stories", require("../Navigation/icons8-chat-50_white.png"), "stories", "Stories")}
                 </div>);
             case 0:
                 return null;
@@ -246,11 +161,21 @@ class RightBar extends Component {
                 <ul>
                     {people.map((person, i) => {
                         const {full_name, person_id} = person;
-                        return <li key={i} onClick={(event) => {
+                        const open = (event) => {
                             event.preventDefault();
                             this.clickHandler(person_id, full_name, "People", person);
-                        }}>
-                            <img className="icon-item" src={require("../Navigation/icons8-contacts-32.png")} alt="person" />
+                        };
+                        return <li
+                            key={i}
+                            role="button"
+                            tabIndex={0}
+                            onClick={open}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    open(event);
+                                }
+                            }}>
+                            <img className="icon-item" src={require("../Navigation/icons8-contacts-32.png")} alt="" />
                             {full_name}
                         </li>;
                     })}
@@ -283,18 +208,25 @@ class RightBar extends Component {
                         {places.map((place, i) => {
                             // get its name + ID
                             const {name, place_id} = place;
+                            const open = () => {
+                                // open the relevant place and add it to the nexus graph
+                                this.clickHandler(place_id, name, "Places", place);
+                            };
                             return <li
                                 // key for React re-rendering
                                 key={i}
-                                // when clicked
-                                onClick={() => {
-                                    // open the relevant place and add it to the nexus graph
-                                    this.clickHandler(place_id, name, "Places", place);
+                                role="button"
+                                tabIndex={0}
+                                onClick={open}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        open();
+                                    }
                                 }}>
                                 <img
                                     className="icon-item"
                                     src={require("../Navigation/icons8-marker-32.png")}
-                                    alt="location" />
+                                    alt="" />
                                 {/* fieldtrip places use full_name on their places, all others use display_name */}
                                 {view === "Fieldtrips" ? place.full_name : place.display_name}
                             </li>;
@@ -332,12 +264,20 @@ class RightBar extends Component {
                             const {full_name, story_id} = story;
                             const genres = getStoryGenres(story_id);
                             const etkIndices = getStoryETKIndices(story_id);
+                            const open = () => {
+                                this.clickHandler(story_id, full_name, "Stories", story);
+                            };
                             return <li
                                 key={i}
-                                onClick={() => {
-                                    this.clickHandler.bind(this)(story_id, full_name, "Stories", story);
+                                role="button"
+                                tabIndex={0}
+                                onClick={open}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        open();
+                                    }
                                 }}>
-                                <img className={"icon-item"} src={require("../Navigation/icons8-chat-filled-32.png")} alt="story" />
+                                <img className={"icon-item"} src={require("../Navigation/icons8-chat-filled-32.png")} alt="" />
                                 {full_name}
                                 {(genres.length > 0 || etkIndices.length > 0) && (
                                     <span className="story-meta">
@@ -374,10 +314,12 @@ class RightBar extends Component {
                                         <div><b>Born</b> {birth_date}</div>
                                         <div><b>Died</b> {death_date}</div>
                                         <div><b>ID#</b> {object.informant_id}</div>
-                                        <a onClick={() => {
-                                            // if (per)
-                                            this.clickHandler(person_id, full_name, "People", bio);
-                                        }} className="button">Informant Page</a>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                this.clickHandler(person_id, full_name, "People", bio);
+                                            }}
+                                            className="button">Informant Page</button>
                                     </div>
                                 </div>
                             </div>

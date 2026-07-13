@@ -170,6 +170,27 @@ h2.title {
 
 .name-header {
     float: left;
+    /* was an h4; bumped to h3 to avoid skipping a heading level after h2 .title (WCAG 2.4.6) */
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* accordion-title is now a <button> for keyboard/AT support; strip default button chrome */
+button.accordion-title {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button.accordion-title:focus-visible,
+.story-viewer-options li:focus-visible,
+.associated-items:focus-visible,
+.font-control button:focus-visible {
+    outline: 2px solid #0081C6;
+    outline-offset: 2px;
 }
 
 .font-control {

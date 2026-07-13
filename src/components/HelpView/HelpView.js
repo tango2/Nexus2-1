@@ -48,12 +48,13 @@ class HelpView extends React.Component {
             <div className="grid-container" key={index}>
                 <div className="grid-x grid-padding-x small-up-2 medium-up-3">
                     {row.map((title, offset) => (
-                        <a
-                            className="cell"
+                        <button
+                            type="button"
+                            className="cell help-nav-card"
                             onClick={this.setView.bind(this, (index * rowLength) + offset)}
                             key={title}>
                             <h4 className="card card-section">{title}</h4>
-                        </a>
+                        </button>
                     ))}
                 </div>
             </div>

@@ -73,7 +73,16 @@ class FieldtripTool extends React.Component {
                             <li
                                 key={fieldtrip_id}
                                 className={`cell ${activeFieldtrips.includes(fieldtrip_id) ? "activeTrip" : ""}`}
-                                onClick={this.handleSelect.bind(this, fieldtrip_id)}>
+                                role="button"
+                                tabIndex={0}
+                                aria-pressed={activeFieldtrips.includes(fieldtrip_id)}
+                                onClick={this.handleSelect.bind(this, fieldtrip_id)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        this.handleSelect(fieldtrip_id);
+                                    }
+                                }}>
                                 {fieldtrip_name}
                             </li>
                         ))}

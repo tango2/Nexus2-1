@@ -171,12 +171,22 @@ class TabViewer extends Component {
                         {/* Home tab — always visible, never scrolls away */}
                         <div
                             className={`home-tab ${this.props.state.views[0].active ? "active" : ""}`}
-                            onClick={() => this.props.tabViewerActions.switchTabs(0)}>
+                            role="button"
+                            tabIndex={0}
+                            aria-label="Home tab"
+                            aria-current={this.props.state.views[0].active}
+                            onClick={() => this.props.tabViewerActions.switchTabs(0)}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault();
+                                    this.props.tabViewerActions.switchTabs(0);
+                                }
+                            }}>
                             ⌂
                         </div>
-                        <button className="tab-scroll-btn" onClick={() => this.scrollTabBar(-1)}>&#8249;</button>
+                        <button className="tab-scroll-btn" aria-label="Scroll tabs left" onClick={() => this.scrollTabBar(-1)}>&#8249;</button>
                         {/* Scrollable list of content tabs (everything except Home) */}
-                        <ul className="tabs" ref={this.tabListRef}>
+                        <ul className="tabs" role="tablist" ref={this.tabListRef}>
                             {this.props.state.views.slice(1).filter(view => !!view.name).map((view, sliceIndex) => {
                                 const index = sliceIndex + 1;
                                 return (
@@ -188,7 +198,17 @@ class TabViewer extends Component {
                                                 this.dragIndicatorHeight = instance.getBoundingClientRect().height;
                                             }
                                         }}
+                                        role="tab"
+                                        tabIndex={0}
+                                        aria-selected={view.active}
+                                        aria-label={`${view.name} tab`}
                                         onClick={() => this.props.tabViewerActions.switchTabs(index)}
+                                        onKeyDown={(event) => {
+                                            if (event.key === "Enter" || event.key === " ") {
+                                                event.preventDefault();
+                                                this.props.tabViewerActions.switchTabs(index);
+                                            }
+                                        }}
                                         draggable
                                         onDragStart={(event) => this.handleDragStart(event, index)}
                                         onDragEnter={(event) => this.handleDragEnter(event, index)}
@@ -196,28 +216,36 @@ class TabViewer extends Component {
                                         key={index}
                                         className={view.active ? "active" : ""}
                                         style={{"backgroundColor": view.color}}>
-                                        <img
-                                            src={view.pinned ? "https://img.icons8.com/ios/50/000000/pin-2-filled.png" : "https://img.icons8.com/ios/50/000000/pin-2.png"}
-                                            alt="pin"
-                                            className="pinTabIcon"
+                                        <button
+                                            className="pinTabIcon-btn"
+                                            aria-label={view.pinned ? `Unpin ${view.name} tab` : `Pin ${view.name} tab`}
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 this.props.tabViewerActions.pinTab(index);
-                                            }} />
+                                            }}>
+                                            <img
+                                                src={view.pinned ? "https://img.icons8.com/ios/50/000000/pin-2-filled.png" : "https://img.icons8.com/ios/50/000000/pin-2.png"}
+                                                alt=""
+                                                className="pinTabIcon" />
+                                        </button>
                                         <span className="tab-label">{view.name}</span>
-                                        <img
-                                            src={require("../Navigation/icons8-delete-24.png")}
-                                            alt="close"
-                                            className="closeTabIcon"
+                                        <button
+                                            className="closeTabIcon-btn"
+                                            aria-label={`Close ${view.name} tab`}
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 this.props.tabViewerActions.closeTab(index);
-                                            }} />
+                                            }}>
+                                            <img
+                                                src={require("../Navigation/icons8-delete-24.png")}
+                                                alt=""
+                                                className="closeTabIcon" />
+                                        </button>
                                     </li>
                                 );
                             })}
                         </ul>
-                        <button className="tab-scroll-btn" onClick={() => this.scrollTabBar(1)}>&#8250;</button>
+                        <button className="tab-scroll-btn" aria-label="Scroll tabs right" onClick={() => this.scrollTabBar(1)}>&#8250;</button>
                     </div>
                 </div>
                 {/* only display if we are currently dragging an element */}

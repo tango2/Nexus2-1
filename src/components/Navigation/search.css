@@ -13,7 +13,8 @@ and (min-height: 768px){
 
 .SearchComponent {
     padding: 5% 0 4% 2%;
-    background: #0081C6;
+    /* darkened from #0081C6 (4.24:1 with white text) to meet WCAG 1.4.3 4.5:1 minimum */
+    background: #006BA3;
     margin-bottom: 20%;
     margin-top: 10%;
     height: auto;
@@ -38,8 +39,9 @@ and (min-height: 768px){
     margin-top: 8%;
 }
 
-.SearchComponent input[type=text]:focus {
-    outline: none;
+.SearchComponent input[type=text]:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
 }
 
 .search-mode-radios {

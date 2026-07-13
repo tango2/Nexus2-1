@@ -10,7 +10,7 @@ import NexusGraph from "./NexusGraph";
 import PropTypes from "prop-types";
 import * as model from "../../data-stores/DisplayArtifactModel";
 import {arrayTransformation} from "../../utils";
-import {nodeColors} from "./NexusGraphModel"
+import {nodeColors, nodeShapes} from "./NexusGraphModel"
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 // actions to manipulate the tabs
@@ -171,10 +171,12 @@ class GraphView extends Component {
     }
 
     legendCircleColor(nodeType) {
+        // shape (circle/square/diamond/triangle) always reflects node type, so type isn't color-only
+        const shapeClass = "shape-" + nodeShapes[nodeType];
         if(this.allFalse.bind(this)() || this.state.highlighted[nodeType]){
-            return "circle " + nodeColors[nodeType];
+            return "node-swatch " + shapeClass + " " + nodeColors[nodeType];
         } else {
-            return "circle lightgrey";
+            return "node-swatch " + shapeClass + " lightgrey";
         }
     }
 
@@ -333,6 +335,44 @@ class GraphView extends Component {
     }
 
     /**
+     * Renders a keyboard/screen-reader-operable list of every node on the graph,
+     * grouped by type, as an alternative to clicking nodes directly on the SVG canvas
+     * (react-d3-graph's canvas has no built-in keyboard support).
+     * @returns {JSX} The rendered list, or null if the graph has no nodes yet
+     */
+    renderAccessibleNodeList() {
+        const {nodeCategories} = this.state;
+        const types = ["People", "Places", "Stories", "Fieldtrips"];
+        const hasAnyNodes = types.some((type) => nodeCategories[type] && nodeCategories[type].length > 0);
+        if (!hasAnyNodes) {
+            return null;
+        }
+        return (
+            <details className="accessible-node-list cell">
+                <summary>Browse graph nodes (list view)</summary>
+                {types.map((type) => nodeCategories[type] && nodeCategories[type].length > 0 && (
+                    <div key={type}>
+                        <h4>{type}</h4>
+                        <ul>
+                            {nodeCategories[type].map((node) => (
+                                <li key={node.id}>
+                                    <span>{node.id}</span>
+                                    <button
+                                        type="button"
+                                        className="button primary node-list-action"
+                                        onClick={() => this.props.actions.addTab(node.itemID, node.id, node.type)}>
+                                        Open {node.id}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </details>
+        );
+    }
+
+    /**
      * Creates the graph and associated button, located at the top right of the home view
      * @returns {JSX} The resulting graph + button
      */
@@ -415,30 +455,30 @@ class GraphView extends Component {
                             </tr>
                         </thead>
                         <tbody className="legend-table-body">
-                            <tr className={this.state.active["People"] ? "highlighted-row" : null} onClick={ (e) => {
-                                e.preventDefault();
-                                this.toggleNodeHighlight.bind(this)("People")} }>
-                                <td><div className={this.legendCircleColor.bind(this)("People")}> </div></td>
-                                <td>People</td>
-                            </tr>
-                            <tr className={this.state.active["Places"] ? "highlighted-row" : null} onClick={ (e) => {
-                                e.preventDefault();
-                                this.toggleNodeHighlight.bind(this)("Places")} }>
-                                <td><div className={this.legendCircleColor.bind(this)("Places")}> </div></td>
-                                <td>Places</td>
-                            </tr>
-                            <tr className={this.state.active["Stories"] ? "highlighted-row" : null} onClick={ (e) => {
-                                e.preventDefault();
-                                this.toggleNodeHighlight.bind(this)("Stories")} }>
-                                <td><div className={this.legendCircleColor.bind(this)("Stories")}> </div></td>
-                                <td>Stories</td>
-                            </tr>
-                            <tr className={this.state.active["Fieldtrips"] ? "highlighted-row" : null} onClick={ (e) => {
-                                e.preventDefault();
-                                this.toggleNodeHighlight.bind(this)("Fieldtrips")} }>
-                                <td><div className={this.legendCircleColor.bind(this)("Fieldtrips")}> </div></td>
-                                <td>Fieldtrips</td>
-                            </tr>
+                            {["People", "Places", "Stories", "Fieldtrips"].map((nodeType) => {
+                                const toggle = (e) => {
+                                    e.preventDefault();
+                                    this.toggleNodeHighlight(nodeType);
+                                };
+                                return (
+                                    <tr
+                                        key={nodeType}
+                                        className={this.state.active[nodeType] ? "highlighted-row" : null}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-pressed={this.state.active[nodeType]}
+                                        aria-label={`Highlight ${nodeType} nodes`}
+                                        onClick={toggle}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                toggle(e);
+                                            }
+                                        }}>
+                                        <td><div className={this.legendCircleColor(nodeType)} aria-hidden="true" /></td>
+                                        <td>{nodeType}</td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
 
@@ -451,26 +491,28 @@ class GraphView extends Component {
                         <tbody className="legend-table-body">
                         <tr>
                             <td className={preview === "No Preview Available" ? "hidden" : "preview"}>{preview}</td>
-                            <div className={preview === "No Preview Available" ? "callout alert no-preview" : "hidden"}>
+                            <td className={preview === "No Preview Available" ? "callout alert no-preview" : "hidden"}>
                                 <h6>No preview available.</h6>
-                            </div>
+                            </td>
                         </tr>
                         <tr>
-                            <button className="button primary node-options" onClick={(e) => {
-                                e.preventDefault();
-                                this.openNodeTab.bind(this)()}}>
-                                View {clickedNodeId} Page
-                            </button>
-                            <button className="button alert node-options" onClick={(e) => {
-                                e.preventDefault();
-                                this.removeNode.bind(this)()}}>
-                                Delete Node
-                            </button>
-                            <button className="button secondary node-options" onClick={(e) => {
-                                e.preventDefault();
-                                this.resetMenu.bind(this)()}}>
-                                Back to Node Legend
-                            </button>
+                            <td>
+                                <button className="button primary node-options" onClick={(e) => {
+                                    e.preventDefault();
+                                    this.openNodeTab.bind(this)()}}>
+                                    View {clickedNodeId} Page
+                                </button>
+                                <button className="button alert node-options" onClick={(e) => {
+                                    e.preventDefault();
+                                    this.removeNode.bind(this)()}}>
+                                    Delete Node
+                                </button>
+                                <button className="button secondary node-options" onClick={(e) => {
+                                    e.preventDefault();
+                                    this.resetMenu.bind(this)()}}>
+                                    Back to Node Legend
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -488,6 +530,7 @@ class GraphView extends Component {
                         </button>
                     </div>
 
+                    {this.renderAccessibleNodeList()}
                 </form>
                 {/* the actual graph */}
                 <div>

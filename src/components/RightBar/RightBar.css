@@ -143,5 +143,12 @@ and (min-height: 769px){
 .story-etk {
     display: block;
     font-size: 0.70em;
-    color: #888;
+    /* darkened from #888 (3.54:1) to meet WCAG 1.4.3 4.5:1 minimum on #f9f9f9 */
+    color: #616161;
+}
+
+.control-container .list-content ul li:focus-visible,
+.controls [role="button"]:focus-visible {
+    outline: 2px solid #ffd400;
+    outline-offset: 2px;
 }

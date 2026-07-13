@@ -418,12 +418,21 @@ class Navigation extends Component {
         const ontologyType = this.state.dataNavView === true ? "dataNav" : "TINav";
         return (
             <div className="NavigatorComponent grid-y">
-                <div className="navigator-tabs cell medium-1 grid-x">{
+                <div className="navigator-tabs cell medium-1 grid-x" role="tablist">{
                     this.state.navigators.map(({name, tabClass}) => (
                         <div
                             className={tabClass}
                             key={name}
-                            onClick={this.setActiveTab.bind(this, name)}>
+                            role="tab"
+                            tabIndex={0}
+                            aria-selected={tabClass.includes("active")}
+                            onClick={this.setActiveTab.bind(this, name)}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault();
+                                    this.setActiveTab(name);
+                                }
+                            }}>
                             {name}
                         </div>
                     ))
@@ -435,7 +444,15 @@ class Navigation extends Component {
                                 <li
                                     className="macroscopeTool"
                                     key={tool.id}
-                                    onClick={() => this.props.addTab(tool.id, tool.name, "Macroscope")}>
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => this.props.addTab(tool.id, tool.name, "Macroscope")}
+                                    onKeyDown={(event) => {
+                                        if (event.key === "Enter" || event.key === " ") {
+                                            event.preventDefault();
+                                            this.props.addTab(tool.id, tool.name, "Macroscope");
+                                        }
+                                    }}>
                                     <span className="macroscope-tool-name">{tool.name}</span>
                                     <br />
                                     <span className="macroscope-tool-desc">{tool.desc}</span>
@@ -449,7 +466,16 @@ class Navigation extends Component {
                                     <li
                                         className={`ontology ${ontology} ${this.state.activeList === ontology ? "active" : ""}`}
                                         key={ontology}
-                                        onClick={this.handleLevelTwoClick.bind(this, ontology)}>
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-pressed={this.state.activeList === ontology}
+                                        onClick={this.handleLevelTwoClick.bind(this, ontology)}
+                                        onKeyDown={(event) => {
+                                            if (event.key === "Enter" || event.key === " ") {
+                                                event.preventDefault();
+                                                this.handleLevelTwoClick(ontology);
+                                            }
+                                        }}>
                                         {ontology}
                                     </li>
                                 ))

@@ -16,6 +16,15 @@ export const nodeColors = {
     "default": "black",
 };
 
+// shapes of the nodes on the graph, so node type isn't conveyed by color alone (WCAG 1.4.1)
+export const nodeShapes = {
+    "People": "circle",
+    "Places": "square",
+    "Stories": "diamond",
+    "Fieldtrips": "triangle",
+    "default": "circle",
+};
+
 // colors of primary + secondary links
 const linkColors = {
     "primary": "lightblue",
@@ -481,6 +490,8 @@ export function createNode(id, name, type, item) {
         "id": name,
         // color of the node on the graph
         color,
+        // shape of the node on the graph, so type isn't conveyed by color alone
+        "symbolType": nodeShapes[type] || nodeShapes.default,
         // item associated with the node
         item,
         // type of the node

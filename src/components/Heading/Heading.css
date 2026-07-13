@@ -43,16 +43,32 @@ and (min-height: 700px) and (max-height:768px){
 }
 
 .flag {
+    /* reset default <button> chrome */
+    background: none;
+    border: none;
     padding-top: 0;
     padding-right: 0;
     width: 12%!important;
     height: 30%;
+    cursor: pointer;
 }
 
 .Hamburger-Menu {
+    /* reset default <button> chrome */
+    background: none;
+    border: none;
+    display: block;
     padding-top: .1%;
     padding-left: 3%;
     cursor: pointer;
+}
+
+.flag:focus-visible,
+.Hamburger-Menu:focus-visible,
+.help-btn:focus-visible,
+.menu-item:focus-visible {
+    outline: 2px solid #ffd400;
+    outline-offset: 2px;
 }
 
 .Hamburger-Menu div {

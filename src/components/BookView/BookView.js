@@ -225,6 +225,13 @@ class BookView extends Component {
                             this.setState({
                                 "dropdownActive": false,
                             });
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                                this.setState({
+                                    "dropdownActive": false,
+                                });
+                            }
                         }}>
                         {/* render the dropdown */}
                         <div className="solid">{this.dropdownJSX}</div>
@@ -261,6 +268,7 @@ class BookView extends Component {
                             type="text"
                             // 2/3 of the form's width
                             className="cell medium-8"
+                            aria-label="Search the book"
                             // placeholder to show if nothing typed
                             placeholder="Search the book..."
                             // value based on what has been typed
@@ -290,11 +298,13 @@ class BookView extends Component {
                         <div className="cell medium-1 grid-x">
                             <button
                                 className="cell fontButton"
+                                aria-label="Decrease text size"
                                 onClick={this.changeFontSize.bind(this, -1)}>
                                 a
                             </button>
                             <button
                                 onClick={this.changeFontSize.bind(this, 1)}
+                                aria-label="Increase text size"
                                 className="cell fontButton">
                                 A
                             </button>
@@ -303,6 +313,7 @@ class BookView extends Component {
                         <button
                             // give it page turn styling
                             className="cell medium-10 pager"
+                            aria-label="Previous page"
                             onClick={() => {
                                 // go to the left page on click
                                 this.rendition.prev();
@@ -310,7 +321,7 @@ class BookView extends Component {
                             {/* show a large < */}
                             <img
                                 className="left-hover"
-                                src="https://img.icons8.com/ios/50/000000/chevron-left-filled.png" alt="<" />
+                                src="https://img.icons8.com/ios/50/000000/chevron-left-filled.png" alt="" />
                         </button>
                         <div className="cell medium-1"></div>
                     </div>
@@ -320,6 +331,7 @@ class BookView extends Component {
                     <button
                         // give it page turn styling
                         className="pager cell medium-1"
+                        aria-label="Next page"
                         onClick={() => {
                             // go to the right page on click
                             this.rendition.next();
@@ -327,7 +339,7 @@ class BookView extends Component {
                         {/* show a large > */}
                         <img
                             src="https://img.icons8.com/ios/50/000000/chevron-right-filled.png"
-                            alt=">" />
+                            alt="" />
                     </button>
                 </div>
                 {/* when the search results are to be shown */}

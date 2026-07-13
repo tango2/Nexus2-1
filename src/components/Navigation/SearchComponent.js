@@ -29,6 +29,7 @@ class SearchComponent extends Component {
                 }}>
                 <input
                     type="text"
+                    aria-label={searchMode === "text" ? "Search in story text" : "Search by publication info"}
                     placeholder={searchMode === "text" ? "Search in story text" : "e.g. DS_II_D_5"}
                     style={{caretColor: "white"}}
                     value={inputValue}

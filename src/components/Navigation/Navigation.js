@@ -179,10 +179,19 @@ class Navigation extends React.Component {
                     );
                 }
             }
+            const open = () => {
+                this.handleIDQuery(id, displayName, displayOntology, item);
+            };
             return (<li
                 key={displayOntology + id}
-                onClick={() => {
-                    this.handleIDQuery(id, displayName, displayOntology, item);
+                role="button"
+                tabIndex={0}
+                onClick={open}
+                onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        open();
+                    }
                 }}>
                 {image}
                 <span className="result-name">{displayName}</span>
@@ -321,6 +330,7 @@ class Navigation extends React.Component {
                         <input
                             className="navTypeahead"
                             type="text"
+                            aria-label={`Type ahead to find a ${listOntology === "People" ? "person" : listOntology.slice(0, -1).toLowerCase()}`}
                             placeholder={`Type ahead to find a ${listOntology === "People" ? "person" : listOntology.slice(0, -1).toLowerCase()}…`}
                             value={this.state.typeaheadQuery}
                             onChange={this.handleTypeaheadChange} />}
@@ -343,12 +353,13 @@ class Navigation extends React.Component {
                         className="cell medium-2 small-1 time-filter grid-x">
                         {/*insert time flip switch*/}
                         {this.renderTimeSwitch.bind(this)(timeFilterHandler, timeFilterOn)}
-                        <b className="medium-2 medium-offset-1 large-2 large-offset-0 cell text top-padding">From:</b>
+                        <b id="fromYearLabel" className="medium-2 medium-offset-1 large-2 large-offset-0 cell text top-padding">From:</b>
                         <div className="medium-2 large-2 cell top-padding">
                             <input
                                 className="year"
                                 type="number"
                                 name="fromYear"
+                                aria-labelledby="fromYearLabel"
                                 min={1887}
                                 max={toDate}
                                 value={fromDate}
@@ -359,18 +370,20 @@ class Navigation extends React.Component {
                                     className="slider"
                                     name="fromYear"
                                     type="range"
+                                    aria-label="From year (drag slider)"
                                     min="1887"
                                     max={toDate}
                                     value={fromDate}
                                     onChange={timeFilterHandler}
                                     onMouseUp={this.timeInputEnd} />}
                         </div>
-                        <b className="medium-1 large-1 cell text top-padding">To</b>
+                        <b id="toYearLabel" className="medium-1 large-1 cell text top-padding">To</b>
                         <div className="medium-2 large-2 cell top-padding">
                             <input
                                 className="year"
                                 type="number"
                                 name="toYear"
+                                aria-labelledby="toYearLabel"
                                 min={fromDate}
                                 max={1899}
                                 value={toDate}
@@ -381,6 +394,7 @@ class Navigation extends React.Component {
                                     className="slider"
                                     type="range"
                                     name="toYear"
+                                    aria-label="To year (drag slider)"
                                     min={fromDate}
                                     max="1899"
                                     value={toDate}

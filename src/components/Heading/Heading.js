@@ -42,77 +42,104 @@ class Heading extends Component {
                 <div className="large-4 medium-4 cell heading-stuff">
                     <div className="grid-x grid-margin-x">
                         {/* Flag that links back to the home page */}
-                        <a className="flag medium-3 medium-offset-1 cell">
+                        <button
+                            type="button"
+                            className="flag medium-3 medium-offset-1 cell"
+                            aria-label="Go to home tab"
+                            // callback for when the button is clicked
+                            onClick={() => {
+                                // go to the home tab
+                                this.props.tabViewerActions.switchTabs(0);
+                            }}>
                             <img
                                 // load image from the correct file
                                 src={require("./assets/DENM0001.png")}
-                                // text if the file can't load
-                                alt="Danish Flag"
-                                // callback for when the function is clicked
-                                onClick={() => {
-                                    // go to the home tab
-                                    this.props.tabViewerActions.switchTabs(0);
-                                }} />
-                        </a>
-                        {/* Text to the right of the flag */}
-                        <h5 className="danish-folklore medium-2 cell">Danish Folklore</h5>
-                        <h6 className="etk medium-6 cell">The Evald Tang <br /> Kristensen Collection</h6>
+                                // decorative — button already has an accessible name
+                                alt="" />
+                        </button>
+                        {/* Text to the right of the flag — the only h1 in the app */}
+                        <h1 className="danish-folklore medium-2 cell">Danish Folklore</h1>
+                        <p className="etk medium-6 cell">The Evald Tang <br /> Kristensen Collection</p>
                     </div>
                 </div>
                 {/* help button */}
                 <button className="medium-offset-6 medium-1 cell help-btn"
+                    aria-label="Open help"
                     // when clicked, open up the help tab
                     onClick={() => {
                         this.props.tabViewerActions.addTab(0, "Help", "Help");
                     }}>
                     {/* creates the ? in a circle */}
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" width="25" height="25" style={{"fill": "#000000"}}><g fill="none" fillRule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" fontFamily="none" fontWeight="none" fontSize="none" textAnchor="none" style={{"mixBlendMode": "normal"}}><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#ffffff"><path d="M112,8.96c-56.85436,0 -103.04,46.18564 -103.04,103.04c0,56.85436 46.18564,103.04 103.04,103.04c56.85436,0 103.04,-46.18564 103.04,-103.04c0,-56.85436 -46.18564,-103.04 -103.04,-103.04zM112,17.92c52.01201,0 94.08,42.06799 94.08,94.08c0,52.01201 -42.06799,94.08 -94.08,94.08c-52.01201,0 -94.08,-42.06799 -94.08,-94.08c0,-52.01201 42.06799,-94.08 94.08,-94.08zM113.295,56.035c-16.7104,0 -27.79028,10.12536 -30.205,25.55c-0.1568,0.96768 0.31857,1.60622 1.28625,1.7675l10.12375,1.77625c0.96768,0.16128 1.60622,-0.32305 1.7675,-1.28625c1.9264,-9.80224 7.70791,-15.26875 16.70375,-15.26875c9.1616,0 15.58375,5.78788 15.58375,14.945c0,5.4656 -1.92458,9.15992 -7.5425,16.87l-10.77125,14.77875c-3.37344,4.66368 -4.8125,8.03922 -4.8125,14.4725v6.58c0,0.9632 0.63805,1.61042 1.60125,1.5925h10.605c0.9632,0 1.60125,-0.63805 1.60125,-1.60125v-5.13625c0,-5.46112 0.97034,-7.71211 4.1825,-12.04875l10.7625,-14.7875c5.4656,-7.55328 8.19,-13.17169 8.19,-20.88625c0,-15.90848 -11.72969,-27.3175 -29.07625,-27.3175zM106.23375,150.045c-0.96768,0 -1.61,0.6468 -1.61,1.61v13.81625c0,0.9632 0.63784,1.60125 1.61,1.60125h12.215c0.95872,0 1.60125,-0.63357 1.60125,-1.60125v-13.81625c0,-0.95872 -0.63805,-1.61 -1.60125,-1.61z"></path></g></g></svg>
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" width="25" height="25" style={{"fill": "#000000"}}><g fill="none" fillRule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" fontFamily="none" fontWeight="none" fontSize="none" textAnchor="none" style={{"mixBlendMode": "normal"}}><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#ffffff"><path d="M112,8.96c-56.85436,0 -103.04,46.18564 -103.04,103.04c0,56.85436 46.18564,103.04 103.04,103.04c56.85436,0 103.04,-46.18564 103.04,-103.04c0,-56.85436 -46.18564,-103.04 -103.04,-103.04zM112,17.92c52.01201,0 94.08,42.06799 94.08,94.08c0,52.01201 -42.06799,94.08 -94.08,94.08c-52.01201,0 -94.08,-42.06799 -94.08,-94.08c0,-52.01201 42.06799,-94.08 94.08,-94.08zM113.295,56.035c-16.7104,0 -27.79028,10.12536 -30.205,25.55c-0.1568,0.96768 0.31857,1.60622 1.28625,1.7675l10.12375,1.77625c0.96768,0.16128 1.60622,-0.32305 1.7675,-1.28625c1.9264,-9.80224 7.70791,-15.26875 16.70375,-15.26875c9.1616,0 15.58375,5.78788 15.58375,14.945c0,5.4656 -1.92458,9.15992 -7.5425,16.87l-10.77125,14.77875c-3.37344,4.66368 -4.8125,8.03922 -4.8125,14.4725v6.58c0,0.9632 0.63805,1.61042 1.60125,1.5925h10.605c0.9632,0 1.60125,-0.63805 1.60125,-1.60125v-5.13625c0,-5.46112 0.97034,-7.71211 4.1825,-12.04875l10.7625,-14.7875c5.4656,-7.55328 8.19,-13.17169 8.19,-20.88625c0,-15.90848 -11.72969,-27.3175 -29.07625,-27.3175zM106.23375,150.045c-0.96768,0 -1.61,0.6468 -1.61,1.61v13.81625c0,0.9632 0.63784,1.60125 1.61,1.60125h12.215c0.95872,0 1.60125,-0.63357 1.60125,-1.60125v-13.81625c0,-0.95872 -0.63805,-1.61 -1.60125,-1.61z"></path></g></g></svg>
                 </button>
                 {/* Book icon to open the chapter selection dropdown */}
-                <div
+                <button
+                    type="button"
                     // CSS classes
                     className="Hamburger-Menu medium-1 cell"
+                    aria-label="Open chapter menu"
+                    aria-expanded={this.state.menuActive}
                     // toggle the menu when this is clicked
                     onClick={this.menuToggle}>
                     <img
                         // from where to load the image
                         src={require("../Navigation/icons8-book-64.png")}
                         style={{"height": "2.9em", "paddingTop": "7px", "paddingLeft": "10px"}}
-                        alt="book" />
-                </div>
+                        alt="" />
+                </button>
                 {/* dropdown menu that links to the various chapters */}
                 {this.state.menuActive &&
-                    <div className="Menu" onClick={this.menuToggle}>
+                    <div
+                        className="Menu"
+                        onClick={this.menuToggle}
+                        onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                                this.menuToggle();
+                            }
+                        }}>
                         <div className="solid">
                             {/* little open book at the top right */}
-                            <div className="Hamburger-Menu" onClick={this.menuToggle}>
+                            <button
+                                type="button"
+                                className="Hamburger-Menu"
+                                aria-label="Close chapter menu"
+                                onClick={this.menuToggle}>
                                 <img src={require("../Navigation/icons8-open-book-64.png")}
-                                     style={{"height": "2.9em", "paddingTop": "5px"}} alt="open book"
-                                     onClick={this.menuToggle} />
-                            </div>
+                                     style={{"height": "2.9em", "paddingTop": "5px"}} alt="" />
+                            </button>
                             {/* list of all the chapters */}
                             <ul className="list">
                                 {/* for each of the chapter links */}
-                                {menuList.map((menuItem, i) => (
-                                    // return a single element of the list
-                                    <li
-                                        // unique key for react re-rendering
-                                        key={i}
-                                        // style it as a dropdown element
-                                        className="menu-item"
-                                        // callback when this option is clicked
-                                        onClick={(event) => {
-                                            // prevent default click behavior
-                                            event.preventDefault();
-                                            // add a tab to the desired chapter
-                                            this.props.tabViewerActions.addTab(
-                                                menuItem.id,
-                                                menuItem.name,
-                                                "Book"
-                                            );
-                                        }}
-                                    >{menuItem.name}</li>
-                                ))}
+                                {menuList.map((menuItem, i) => {
+                                    const open = (event) => {
+                                        // prevent default click behavior
+                                        event.preventDefault();
+                                        // add a tab to the desired chapter
+                                        this.props.tabViewerActions.addTab(
+                                            menuItem.id,
+                                            menuItem.name,
+                                            "Book"
+                                        );
+                                    };
+                                    return (
+                                        // return a single element of the list
+                                        <li
+                                            // unique key for react re-rendering
+                                            key={i}
+                                            // style it as a dropdown element
+                                            className="menu-item"
+                                            role="button"
+                                            tabIndex={0}
+                                            // callback when this option is clicked
+                                            onClick={open}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    open(event);
+                                                }
+                                            }}
+                                        >{menuItem.name}</li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     </div>

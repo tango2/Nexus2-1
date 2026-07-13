@@ -16,11 +16,18 @@
 .filter-chips-clear {
     background: none;
     border: none;
-    color: #0081C6;
+    /* darkened from #0081C6 (4.24:1) to meet WCAG 1.4.3 4.5:1 minimum on #f5f5f5 */
+    color: #006BA3;
     cursor: pointer;
     padding: 0;
     font-size: 0.9em;
     text-decoration: underline;
+}
+
+.filter-chips-clear:focus-visible,
+.filter-chip:focus-visible {
+    outline: 2px solid #006BA3;
+    outline-offset: 2px;
 }
 
 .filter-chips-row {
@@ -32,7 +39,8 @@
 }
 
 .filter-chips-label {
-    color: #777;
+    /* darkened from #777 (4.48:1) to meet WCAG 1.4.3 4.5:1 minimum on #f5f5f5 */
+    color: #616161;
     font-weight: 600;
     min-width: 60px;
     font-size: 0.9em;
@@ -43,10 +51,11 @@
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    border: 1px solid #0081C6;
+    border: 1px solid #006BA3;
     border-radius: 12px;
     background: white;
-    color: #0081C6;
+    /* darkened from #0081C6 (4.24:1) to meet WCAG 1.4.3 4.5:1 minimum on white */
+    color: #006BA3;
     font-size: 0.88em;
     cursor: pointer;
     transition: background 0.12s, color 0.12s;
@@ -58,7 +67,7 @@
 }
 
 .filter-chip.active {
-    background: #0081C6;
+    background: #006BA3;
     color: white;
 }
 

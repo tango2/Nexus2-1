@@ -114,6 +114,7 @@ class FilterChips extends Component {
                             <button
                                 key={name}
                                 className={"filter-chip" + (activeGenres.has(name) ? " active" : "")}
+                                aria-pressed={activeGenres.has(name)}
                                 onClick={() => this.toggleGenre(name)}>
                                 {name} <span className="chip-count">{count}</span>
                             </button>
@@ -128,6 +129,7 @@ class FilterChips extends Component {
                             <button
                                 key={prefix}
                                 className={"filter-chip" + (activeCollections.has(prefix) ? " active" : "")}
+                                aria-pressed={activeCollections.has(prefix)}
                                 onClick={() => this.toggleCollection(prefix)}>
                                 {collectionLabel(prefix)} <span className="chip-count">{count}</span>
                             </button>

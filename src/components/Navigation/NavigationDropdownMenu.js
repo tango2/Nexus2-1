@@ -32,9 +32,11 @@ class Navigation extends Component {
     }
 
     render() {
+        const {ontology} = this.props.list;
         return (
             <form className="NavigationDropdownMenu">
                 <select
+                    aria-label={ontology ? `Select ${ontology}` : "Select an option"}
                     value={this.props.list.selectValue}
                     onChange={this.handleDropdownChange.bind(this)}>
                     {this.optionsRender()}

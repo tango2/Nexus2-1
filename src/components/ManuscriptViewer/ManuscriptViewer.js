@@ -17,18 +17,39 @@ class ManuscriptViewer extends Component {
         this.closeLightbox = this.closeLightbox.bind(this);
         this.handleWheel = this.handleWheel.bind(this);
         this.handleBackdropClick = this.handleBackdropClick.bind(this);
+        // ref to the lightbox close button, focused when the lightbox opens
+        this.closeButtonRef = React.createRef();
+        // ref to the trigger that opened the lightbox, refocused when it closes
+        this.openTriggerRef = React.createRef();
+    }
+
+    openLightbox() {
+        this.setState({"lightboxOpen": true, "zoomLevel": 1}, () => {
+            if (this.closeButtonRef.current) {
+                this.closeButtonRef.current.focus();
+            }
+        });
+    }
+
+    closeLightboxAndRestoreFocus() {
+        this.setState({"lightboxOpen": false, "zoomLevel": 1}, () => {
+            if (this.openTriggerRef.current) {
+                this.openTriggerRef.current.focus();
+            }
+        });
     }
 
     closeLightbox(e) {
         if (e.type === "keydown" && e.key !== "Escape") return;
-        this.setState({"lightboxOpen": false, "zoomLevel": 1});
+        if (!this.state.lightboxOpen) return;
+        this.closeLightboxAndRestoreFocus();
     }
 
     handleBackdropClick() {
         if (this.state.zoomLevel > 1) {
             this.setState({"zoomLevel": 1});
         } else {
-            this.setState({"lightboxOpen": false});
+            this.closeLightboxAndRestoreFocus();
         }
     }
 
@@ -67,8 +88,34 @@ class ManuscriptViewer extends Component {
             <div className="ManuscriptViewer">
                 {/* Lightbox overlay */}
                 {lightboxOpen && (
-                    <div className="ms-lightbox" onClick={this.handleBackdropClick} onWheel={this.handleWheel}>
-                        <button className="ms-lightbox-close" onClick={e => { e.stopPropagation(); this.setState({"lightboxOpen": false, "zoomLevel": 1}); }}>✕</button>
+                    <div
+                        className="ms-lightbox"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={`Manuscript page ${current.seq}, enlarged view`}
+                        onClick={this.handleBackdropClick}
+                        onWheel={this.handleWheel}
+                        onKeyDown={e => {
+                            // keep focus inside the lightbox while it's open (simple trap: only
+                            // 2-3 focusable elements, so wrap Tab/Shift+Tab between first and last)
+                            if (e.key !== "Tab") return;
+                            const focusable = e.currentTarget.querySelectorAll("button:not(:disabled)");
+                            if (focusable.length === 0) return;
+                            const first = focusable[0];
+                            const last = focusable[focusable.length - 1];
+                            if (e.shiftKey && document.activeElement === first) {
+                                e.preventDefault();
+                                last.focus();
+                            } else if (!e.shiftKey && document.activeElement === last) {
+                                e.preventDefault();
+                                first.focus();
+                            }
+                        }}>
+                        <button
+                            ref={this.closeButtonRef}
+                            className="ms-lightbox-close"
+                            aria-label="Close enlarged view"
+                            onClick={e => { e.stopPropagation(); this.closeLightboxAndRestoreFocus(); }}>✕</button>
                         {zoomLevel > 1 && (
                             <div className="ms-lightbox-hint">Scroll to zoom · click backdrop to reset</div>
                         )}
@@ -97,10 +144,16 @@ class ManuscriptViewer extends Component {
 
                 {/* Main image */}
                 <div className="ms-main-image" title="Click to enlarge">
-                    <img
-                        src={mainSrc}
-                        alt={`Manuscript page ${current.seq}`}
-                        onClick={() => this.setState({"lightboxOpen": true, "zoomLevel": 1})} />
+                    <button
+                        ref={this.openTriggerRef}
+                        type="button"
+                        className="ms-main-image-btn"
+                        aria-label={`Enlarge manuscript page ${current.seq}`}
+                        onClick={() => this.openLightbox()}>
+                        <img
+                            src={mainSrc}
+                            alt={`Manuscript page ${current.seq}`} />
+                    </button>
                 </div>
 
                 {/* Caption + prev/next */}
@@ -110,12 +163,14 @@ class ManuscriptViewer extends Component {
                         <span>
                             <button
                                 className="ms-nav-btn"
+                                aria-label="Previous page"
                                 disabled={currentIndex === 0}
                                 onClick={() => this.setState({"currentIndex": currentIndex - 1})}>
                                 ‹
                             </button>
                             <button
                                 className="ms-nav-btn"
+                                aria-label="Next page"
                                 disabled={currentIndex === images.length - 1}
                                 onClick={() => this.setState({"currentIndex": currentIndex + 1})}>
                                 ›
@@ -128,12 +183,18 @@ class ManuscriptViewer extends Component {
                 {images.length > 1 && (
                     <div className="ms-thumbnails">
                         {images.map((img, i) => (
-                            <img
+                            <button
+                                type="button"
                                 key={i}
-                                src={`${base}/${thumbPath(img.img_path)}`}
-                                alt={`Page ${img.seq}`}
-                                className={`ms-thumb ${i === currentIndex ? "ms-thumb-active" : ""}`}
-                                onClick={() => this.setState({"currentIndex": i})} />
+                                className={`ms-thumb-btn ${i === currentIndex ? "ms-thumb-active" : ""}`}
+                                aria-label={`Go to page ${img.seq}`}
+                                aria-current={i === currentIndex}
+                                onClick={() => this.setState({"currentIndex": i})}>
+                                <img
+                                    src={`${base}/${thumbPath(img.img_path)}`}
+                                    alt=""
+                                    className="ms-thumb" />
+                            </button>
                         ))}
                     </div>
                 )}
