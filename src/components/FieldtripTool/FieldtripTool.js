@@ -4,6 +4,8 @@ import MapView from "../MapView/MapView";
 import {getFieldtripsByID, getPlacesByID} from "../../data-stores/DisplayArtifactModel";
 // import data for fieldtrips
 import FieldtripsData from "../../data/cfieldtrips.json";
+// import the fieldtrip route/stops geojsons, keyed by fieldtrip_id
+import geojsons from "../../data/ft_geojsons/combined_geojson.js";
 import {bindActionCreators} from "redux";
 import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
@@ -64,6 +66,12 @@ class FieldtripTool extends React.Component {
                 // and extract the places from those fieldtrips
                 getFieldtripsByID(fieldtrip).places_visited.map((place) => getPlacesByID(place.place_id)))
         );
+        // route + stops geojsons for every active fieldtrip, same as FieldtripView
+        const ActiveGeojsons = [].concat(
+            ...activeFieldtrips
+                .filter((fieldtrip) => geojsons[fieldtrip])
+                .map((fieldtrip) => [geojsons[fieldtrip].route, geojsons[fieldtrip].stops])
+        );
         return (
             <div className="FieldtripTool grid-x">
                 <div className="cell medium-3">
@@ -89,7 +97,7 @@ class FieldtripTool extends React.Component {
                     </ul>
                 </div>
                 <div className="cell medium-9">
-                    <MapView places={PlacesVisited} />
+                    <MapView places={PlacesVisited} view="Fieldtrip" geojsons={ActiveGeojsons} />
                 </div>
             </div >
         );

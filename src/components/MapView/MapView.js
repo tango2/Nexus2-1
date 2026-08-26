@@ -32,6 +32,11 @@ class MapView extends React.Component {
     constructor(props) {
         super(props);
         this.geoPlaces = [];
+        // opacity of the currently selected base map tile layer (historical map sheets are semi-transparent so
+        // stops/routes underneath remain visible)
+        this.state = {
+            "tileOpacity": 1,
+        };
         // start off with defaults
         this.tiles = [
             {
@@ -138,6 +143,7 @@ class MapView extends React.Component {
                                 attribution={tile.attribution}
                                 url={tile.url}
                                 checked={tile.checked}
+                                opacity={this.state.tileOpacity}
                             />
                         </BaseLayer>
                     );
@@ -148,6 +154,7 @@ class MapView extends React.Component {
                                 layers={tile.layers}
                                 format={tile.format}
                                 url={tile.url}
+                                opacity={this.state.tileOpacity}
                             />
                         </BaseLayer>
                     );
@@ -322,20 +329,34 @@ class MapView extends React.Component {
 
     render() {
         return (
-            <Map ref="map"
-                center={this.defineMapCenter.bind(this)()}
-                zoom={this.defineMapZoom.bind(this)()}
-                boundsOptions={{
-                    paddingBottomRight: [250, 0],
-                    paddingTopLeft: [250, 0],
-                }}
-            >
-                <LayersControl position="topright">
-                    {this.renderTiles.bind(this)()}
-                    {this.renderMarkers.bind(this)()}
-                    {this.renderFieldtripLayer.bind(this)()}
-                </LayersControl>
-            </Map>
+            <div className="MapView">
+                <Map ref="map"
+                    center={this.defineMapCenter.bind(this)()}
+                    zoom={this.defineMapZoom.bind(this)()}
+                    boundsOptions={{
+                        paddingBottomRight: [250, 0],
+                        paddingTopLeft: [250, 0],
+                    }}
+                >
+                    <LayersControl position="topright">
+                        {this.renderTiles.bind(this)()}
+                        {this.renderMarkers.bind(this)()}
+                        {this.renderFieldtripLayer.bind(this)()}
+                    </LayersControl>
+                </Map>
+                <div className="map-opacity-control">
+                    <label htmlFor="map-tile-opacity">Map opacity</label>
+                    <input
+                        id="map-tile-opacity"
+                        type="range"
+                        min="0.1"
+                        max="1"
+                        step="0.05"
+                        value={this.state.tileOpacity}
+                        onChange={(event) => this.setState({"tileOpacity": parseFloat(event.target.value)})}
+                    />
+                </div>
+            </div>
         );
     }
 }

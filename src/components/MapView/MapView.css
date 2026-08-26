@@ -22,6 +22,20 @@
      z-index:0;
 }
 
+.map-opacity-control {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* popup content is a <button> (not plain text) so keyboard users can open the place tab */
 .map-popup-open {
     background: none;
