@@ -2,7 +2,7 @@
 
 **Danish Folklore Nexus (Nexus2)** — database, corpus content, and web interface
 
-Copyright © 2018–2026 Timothy R. Tangherlini.
+Copyright © 2012–2026 Timothy R. Tangherlini.
 
 - Database design and corpus creation by Timothy R. Tangherlini and Peter M. Broadwell (UCLA).
 - React web interface by Daniel Huang and contributors (UCLA), based on an earlier Flash interface by Timothy R. Tangherlini and Peter M. Broadwell.
