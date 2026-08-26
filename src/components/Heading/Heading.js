@@ -10,6 +10,8 @@ import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
 // data for the dropdown
 import menuList from "../../data/book_menu.json";
+// session handoff (download/load full app state)
+import {downloadSession, loadSession} from "../../data-stores/SessionHandoffModel";
 
 class Heading extends Component {
     constructor() {
@@ -18,9 +20,34 @@ class Heading extends Component {
         this.state = {
             // the story menu is by default not selected
             "menuActive": false,
+            // set if a loaded session file couldn't be applied
+            "sessionError": null,
         };
         // bind the menu toggle so that sub-elements can properly toggle the menu
         this.menuToggle = this.menuToggle.bind(this);
+        // ref to the hidden file input used to pick a session file to load
+        this.sessionFileInput = React.createRef();
+        this.handleSessionFileChange = this.handleSessionFileChange.bind(this);
+    }
+
+    /**
+     * Read a picked session file and hand it to loadSession(); surfaces any failure in state
+     * @param {Event} event The file input's change event
+     */
+    handleSessionFileChange(event) {
+        const file = event.target.files[0];
+        // reset the input so picking the same file again still fires this handler
+        event.target.value = "";
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                loadSession(reader.result);
+            } catch (error) {
+                this.setState({"sessionError": error.message});
+            }
+        };
+        reader.readAsText(file);
     }
 
     /**
@@ -62,8 +89,30 @@ class Heading extends Component {
                         <p className="etk medium-6 cell">The Evald Tang <br /> Kristensen Collection</p>
                     </div>
                 </div>
+                {/* download the current session (open tabs + graph) as a file */}
+                <button className="medium-offset-4 medium-1 cell session-btn"
+                    aria-label="Download session"
+                    title="Download session"
+                    onClick={downloadSession}>
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" /></svg>
+                </button>
+                {/* load a previously downloaded session file, restoring open tabs + graph */}
+                <button className="medium-1 cell session-btn"
+                    aria-label="Load session"
+                    title="Load session"
+                    onClick={() => this.sessionFileInput.current.click()}>
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21V9m0 0l-4 4m4-4l4 4M5 3h14" /></svg>
+                </button>
+                <input
+                    type="file"
+                    accept="application/json"
+                    ref={this.sessionFileInput}
+                    className="session-file-input"
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    onChange={this.handleSessionFileChange} />
                 {/* help button */}
-                <button className="medium-offset-6 medium-1 cell help-btn"
+                <button className="medium-1 cell help-btn"
                     aria-label="Open help"
                     // when clicked, open up the help tab
                     onClick={() => {
@@ -142,6 +191,16 @@ class Heading extends Component {
                                 })}
                             </ul>
                         </div>
+                    </div>
+                }
+                {/* shown if a loaded session file couldn't be applied */}
+                {this.state.sessionError &&
+                    <div className="session-error" role="alert">
+                        <span>{this.state.sessionError}</span>
+                        <button
+                            type="button"
+                            aria-label="Dismiss"
+                            onClick={() => this.setState({"sessionError": null})}>×</button>
                     </div>
                 }
             </div>

@@ -10,17 +10,20 @@ import * as searchActions from "../../actions/searchActions";
 import {bindActionCreators} from "redux";
 import connect from "react-redux/es/connect/connect";
 
+// tools listed in the Macroscope panel; exported so URL deep-links can resolve a tool id back to its name
+export const MACROSCOPE_TOOLS = [
+    {id: "witchhunter", name: "WitchHunter & TrollFinder", desc: "Geo-map ETK story categories; bounding-box keyword search"},
+    {id: "ghostscope", name: "GhostScope & TreasureX", desc: "Conceptual geographies and directional movement vectors"},
+    {id: "elfyelp", name: "ElfYelp", desc: "LDA geo-topics across the ETK collection"},
+];
+
 class Navigation extends Component {
     constructor(props) {
         super(props);
         // options for the three navigator panels
         this.dataNav = ["People", "Places", "Stories"];
         this.TINav = ["ETK Index", "Tangherlini Index", "Fieldtrips", "Genres"];
-        this.macroscopeNav = [
-            {id: "witchhunter", name: "WitchHunter & TrollFinder", desc: "Geo-map ETK story categories; bounding-box keyword search"},
-            {id: "ghostscope", name: "GhostScope & TreasureX", desc: "Conceptual geographies and directional movement vectors"},
-            {id: "elfyelp", name: "ElfYelp", desc: "LDA geo-topics across the ETK collection"},
-        ];
+        this.macroscopeNav = MACROSCOPE_TOOLS;
         // initial state, further defined later
         this.state = {
             // which of the subclasses is currently active

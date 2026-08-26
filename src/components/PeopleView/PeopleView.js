@@ -13,7 +13,7 @@ import {bindActionCreators} from "redux";
 import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
 
-const PersonIDToChapterID = {
+export const PersonIDToChapterID = {
     150: 7,  // Bitte Jens Kristensen
     235: 8,  // Kirsten Marie Pedersdatter
     241: 9,  // Jens Peter Pedersen

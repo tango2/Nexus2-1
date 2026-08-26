@@ -13,6 +13,9 @@ import FieldtripTool from "../FieldtripTool/FieldtripTool";
 import MacroscopeView from "../MacroscopeView/MacroscopeView";
 // functions to get info about PPFS
 import * as model from "../../data-stores/DisplayArtifactModel";
+// URL <-> tab syncing (breadcrumbing/deep-linking)
+import history from "../../history";
+import {getPathForView} from "../../data-stores/UrlModel";
 // CSS styling
 import "./TabViewer.css";
 // prop validation
@@ -43,15 +46,35 @@ class TabViewer extends Component {
         this.renderActiveTab = this.renderActiveTab.bind(this);
     }
 
+    componentDidMount() {
+        // reflect whatever tab is active on load (e.g. restored from sessionStorage) in the URL
+        this.syncActiveTabToUrl();
+    }
+
     componentDidUpdate(prevProps) {
-        // when the active tab changes, scroll it into view
+        // when the active tab changes, scroll it into view and update the URL to match
         const prevActive = prevProps.state.views.findIndex(v => v.active);
         const nextActive = this.props.state.views.findIndex(v => v.active);
-        if (prevActive !== nextActive && this.tabListRef.current) {
-            const activeTab = this.tabListRef.current.children[nextActive];
-            if (activeTab) {
-                activeTab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        if (prevActive !== nextActive) {
+            if (this.tabListRef.current) {
+                const activeTab = this.tabListRef.current.children[nextActive];
+                if (activeTab) {
+                    activeTab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+                }
             }
+            this.syncActiveTabToUrl();
+        }
+    }
+
+    /**
+     * Push the currently active tab's path to the URL, if it isn't already there
+     * (the equality check also prevents looping with the URL -> state sync in urlActions.js)
+     */
+    syncActiveTabToUrl() {
+        const activeView = this.props.state.views.find(v => v.active);
+        const desiredPath = getPathForView(activeView);
+        if (history.location.pathname !== desiredPath) {
+            history.push(desiredPath);
         }
     }
 

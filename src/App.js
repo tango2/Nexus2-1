@@ -1,5 +1,6 @@
 import React, {Component} from "react";
-import {BrowserRouter} from "react-router-dom";
+import {Router} from "react-router-dom";
+import history from "./history";
 import "./App.css";
 import Home from "./Home";
 
@@ -20,9 +21,9 @@ class App extends Component {
     render() {
         return (
             <div className="App" >
-                <BrowserRouter basename={'/folklorenexus/'}>
+                <Router history={history}>
                     <Home/>
-                </BrowserRouter>
+                </Router>
             </div>
         );
     }
