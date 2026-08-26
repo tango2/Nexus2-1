@@ -22,9 +22,15 @@ import * as tabViewerActions from "../../actions/tabViewerActions";
 import connect from "react-redux/es/connect/connect";
 
 // constants + defaults for our map
-const {BaseLayer} = LayersControl,
+const {Overlay} = LayersControl,
     DEFAULT_MAP_CENTER = [56.2639, 9.5018],
-    DEFAULT_ZOOM_LEVEL = 7;
+    DEFAULT_ZOOM_LEVEL = 7,
+    // the OpenStreetMap tile is always the base layer, drawn beneath everything else
+    OSM_BASE_TILE = {
+        "name": "Default OpenStreet Map",
+        "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "attribution": "&amp;copy <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors",
+    };
 
 // Get capability files from: https://kortforsyningen.dk/indhold/webservice-liste
 
@@ -32,20 +38,13 @@ class MapView extends React.Component {
     constructor(props) {
         super(props);
         this.geoPlaces = [];
-        // opacity of the currently selected base map tile layer (historical map sheets are semi-transparent so
-        // stops/routes underneath remain visible)
+        // opacity of the historical map overlay layers (so the OSM base map underneath, and any
+        // stops/routes on top, remain visible while a historical map sheet is faded)
         this.state = {
             "tileOpacity": 1,
         };
-        // start off with defaults
-        this.tiles = [
-            {
-            "name": "Default OpenStreet Map",
-            "type": "TILE",
-            "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "attribution": "&amp;copy <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors",
-            "checked": false,
-            },
+        // historical map sheets, toggled on/off as overlays above the OSM base layer
+        this.overlayTiles = [
             {
             "name": "High Boards",
             "type": "WMS",
@@ -133,42 +132,22 @@ class MapView extends React.Component {
         }
     }
 
+    /**
+     * Renders the historical map sheets as togglable overlays (checkboxes, stackable) above the OSM base layer,
+     * faded by the opacity slider
+     * @returns {Array<Overlay>} The overlay controls
+     */
     renderTiles() {
-        return this.tiles.map((tile, i) => {
-            switch (tile.type) {
-                case "TILE":
-                    return (
-                        <BaseLayer checked={tile.checked} name={tile.name} key={i}>
-                            <TileLayer
-                                attribution={tile.attribution}
-                                url={tile.url}
-                                checked={tile.checked}
-                                opacity={this.state.tileOpacity}
-                            />
-                        </BaseLayer>
-                    );
-                case "WMS":
-                    return (
-                        <BaseLayer checked={tile.checked} name={tile.name} key={i}>
-                            <WMSTileLayer
-                                layers={tile.layers}
-                                format={tile.format}
-                                url={tile.url}
-                                opacity={this.state.tileOpacity}
-                            />
-                        </BaseLayer>
-                    );
-                default:
-                    return (
-                        <BaseLayer checked={tile.checked} name={tile.name}>
-                            <TileLayer
-                                attribution={tile.attribution}
-                                url={tile.url}
-                            />
-                        </BaseLayer>
-                    );
-            }
-        });
+        return this.overlayTiles.map((tile, i) => (
+            <Overlay checked={tile.checked} name={tile.name} key={i}>
+                <WMSTileLayer
+                    layers={tile.layers}
+                    format={tile.format}
+                    url={tile.url}
+                    opacity={this.state.tileOpacity}
+                />
+            </Overlay>
+        ));
     }
 
     /**
@@ -338,6 +317,10 @@ class MapView extends React.Component {
                         paddingTopLeft: [250, 0],
                     }}
                 >
+                    <TileLayer
+                        attribution={OSM_BASE_TILE.attribution}
+                        url={OSM_BASE_TILE.url}
+                    />
                     <LayersControl position="topright">
                         {this.renderTiles.bind(this)()}
                         {this.renderMarkers.bind(this)()}
