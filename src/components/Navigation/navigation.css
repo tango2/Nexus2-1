@@ -56,6 +56,11 @@ and (min-height: 1024px){
 .dataNavigation {
     border: 10px solid #404040;
     background-color: #404040;
+    /* the search box + navigator (esp. the three Macroscope tools) can be taller
+       than the view on short screens, so scroll inside the column rather than
+       clipping whatever falls below the fold */
+    height: 100%;
+    overflow-y: auto;
 }
 
 .AssociatedStoriesViewer {
@@ -233,4 +238,21 @@ and (min-height: 1024px){
 #fieldtripTool {
     /* expand it to occupy the whole width of its space */
     width: 100%;
+}
+
+/* right column: buttons on top, graph fills the rest of its half of the column */
+.graphPanel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.graphPanel .button {
+    flex: 0 0 auto;
+}
+
+.graphContainer {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }

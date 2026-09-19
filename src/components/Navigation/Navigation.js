@@ -46,9 +46,16 @@ class Navigation extends React.Component {
             "graphKey": 0,
             // live-filter text typed above the center list (Places/People/Stories)
             "typeaheadQuery": "",
+            // pixel size of the graph panel, measured from the DOM so the graph
+            // fits its container on any screen size
+            "graphSize": {"width": 300, "height": 200},
         };
         // ref to the map for updating
         this.map = React.createRef();
+        // ref to the element the mini-graph is sized to fill
+        this.graphContainer = React.createRef();
+        this.resizeTimer = null;
+        this.handleResize = this.handleResize.bind(this);
         // bind functions so that they can be used as callbacks
         this.timeInputClickHandler = this.timeInputClickHandler.bind(this);
         this.timeInputEnd = this.timeInputEnd.bind(this);
@@ -58,6 +65,40 @@ class Navigation extends React.Component {
     componentDidMount() {
         setTimeout(this.setState({timeFilterLoad: true}), 1000)
         // this.setState({timeFilterLoad:true});
+        this.measureGraph();
+        window.addEventListener("resize", this.handleResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.handleResize);
+        clearTimeout(this.resizeTimer);
+    }
+
+    /**
+     * Re-measure the graph panel once the window has stopped resizing
+     */
+    handleResize() {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => this.measureGraph(), 150);
+    }
+
+    /**
+     * Fit the graph to whatever room its panel actually has
+     */
+    measureGraph() {
+        const container = this.graphContainer.current;
+        if (!container) {
+            return;
+        }
+        const {width, height} = container.getBoundingClientRect(),
+            newWidth = Math.floor(width),
+            newHeight = Math.floor(height),
+            {"graphSize": current} = this.state;
+        // ignore a not-yet-laid-out (zero-sized) panel, and no-op re-measures
+        if (newWidth > 0 && newHeight > 0 &&
+            (newWidth !== current.width || newHeight !== current.height)) {
+            this.setState({"graphSize": {"width": newWidth, "height": newHeight}});
+        }
     }
 
     componentDidUpdate(prevProps) {
@@ -275,7 +316,8 @@ class Navigation extends React.Component {
             "actions": {addTab, timeFilterHandler},
             "navigatorState": {displayList, fromDate, placeList, timeFilterOn, toDate},
             "searchState": {searchingState},
-        } = this.props;
+        } = this.props,
+            {graphSize} = this.state;
         // variable to store the main, center display
         let toDisplay;
         // ontology of whatever is currently populating the center list, if any
@@ -416,7 +458,7 @@ class Navigation extends React.Component {
                     </ul>
                 </div>
                 <div className="medium-4 cell grid-y fillScreen">
-                    <div className="medium-6 cell">
+                    <div className="medium-6 cell graphPanel">
                         {/* button that creates + opens the graph tab when clicked */}
                         <button
                             className="button primary"
@@ -435,15 +477,18 @@ class Navigation extends React.Component {
                             }}>
                             Clear Graph
                         </button>
-                        {/* the nexus graph — key forces remount when graph is cleared */}
-                        <NexusGraph
-                            key={this.state.graphKey}
-                            data={initializeGraph()}
-                            nodes={initializeNodeCategories()}
-                            settings={{
-                                "height": window.innerHeight * 0.8 * 0.47,
-                                "width": window.innerWidth * 0.8 * 0.389,
-                            }} />
+                        {/* the graph fills whatever room is left under the buttons */}
+                        <div className="graphContainer" ref={this.graphContainer}>
+                            {/* the nexus graph — key forces remount when the graph is cleared or the panel is resized */}
+                            <NexusGraph
+                                key={`${this.state.graphKey}-${graphSize.width}x${graphSize.height}`}
+                                data={initializeGraph()}
+                                nodes={initializeNodeCategories()}
+                                settings={{
+                                    "height": graphSize.height,
+                                    "width": graphSize.width,
+                                }} />
+                        </div>
                     </div>
                     <MapView className="medium-6 cell"
                         ref={(ref) => {

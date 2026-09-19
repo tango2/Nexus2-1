@@ -1,12 +1,18 @@
 import * as types from "./actionTypes";
+import {addNodeForTab} from "../components/NexusGraph/NexusGraphModel";
 
 /**
  * Add a tab to the view
+ * Also records the item on the NexusGraph, so the browsing-path graph reflects
+ * every tab however it was opened
  * @param {Number} DisplayArtifactID ID referring to the item to display
  * @param {String} name Display name of the tab
  * @param {String} type Type of the display
  */
 export function addTab(DisplayArtifactID, name, type) {
+    if (name) {
+        addNodeForTab(DisplayArtifactID, name, type);
+    }
     return {
         "type": types.ADD_TAB,
         "payload": {DisplayArtifactID, name, type},

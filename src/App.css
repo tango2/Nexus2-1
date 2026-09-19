@@ -29,6 +29,14 @@ body{
 
 /*Responsive Tab Area CSS*/
 
+/* Short viewports (small laptops with browser toolbars) used to get no height at
+   all, so views overflowed the window; give them a sane floor and let the
+   views' own columns scroll */
+.Navigation, .BookView, .PeopleView, .PlaceView, .StoryView, .NexusGraph, .HelpView, .FieldtripTool, .MacroscopeView {
+    height: 83vh;
+    min-height: 400px;
+}
+
 /*600 x 800px*/
 @media screen and (min-height: 590px) {
     .Navigation, .BookView, .PeopleView, .PlaceView, .StoryView, .NexusGraph, .HelpView, .FieldtripTool, .MacroscopeView {

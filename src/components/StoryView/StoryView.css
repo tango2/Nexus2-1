@@ -201,6 +201,10 @@ button.accordion-title:focus-visible,
 
 .story-meta-data-wrapper {
     max-height: 100vh;
+    /* on short screens the map + accordions are taller than the view; scroll
+       instead of running under the tab bar */
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* Bottom of StoryView.css */

@@ -19,7 +19,9 @@ and (min-height: 768px){
 
 .NavigatorComponent {
     background-color: #F2F2F2;
-    margin-top: 10%;
+    /* fixed rather than a % of width, which grew huge on wide screens and ate the
+       height the Macroscope list needs */
+    margin-top: 1.5em;
 }
 
 .navigator-tabs .tab {
@@ -59,7 +61,7 @@ and (min-height: 768px){
 .macroscopeList .macroscopeTool {
     background: #fff;
     height: auto;
-    padding: 8% 5%;
+    padding: 0.9em 5%;
     border-bottom: 1px solid #d2d2d2;
     cursor: pointer;
 }

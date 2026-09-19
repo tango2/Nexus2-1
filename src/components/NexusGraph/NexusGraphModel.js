@@ -502,6 +502,37 @@ export function createNode(id, name, type, item) {
 }
 
 /**
+ * Add the node for an item that is being opened in a tab, looking the item up
+ * from the data model. Lets every code path that opens a tab (map pins, place
+ * links, deep-link URLs, graph double-clicks, ...) keep the graph in step
+ * without each one having to fetch the item itself. Types with no graph node
+ * (Help, Graph, Book, Macroscope, ...) are ignored, and a failure here (e.g.
+ * sessionStorage quota) is logged rather than allowed to block opening the tab.
+ * @param {*} id The ID of the item
+ * @param {String} name The display name of the item
+ * @param {String} type The ontology of the item (People/Places/Stories/Fieldtrips)
+ */
+export function addNodeForTab(id, name, type) {
+    const lookups = {
+        "Fieldtrips": model.getFieldtripsByID,
+        "People": model.getPeopleByID,
+        "Places": model.getPlacesByID,
+        "Stories": model.getStoryByID,
+    };
+    if (!lookups.hasOwnProperty(type)) {
+        return;
+    }
+    try {
+        const item = lookups[type](id);
+        if (item) {
+            addNode(id, name, type, item);
+        }
+    } catch (error) {
+        console.warn(`Could not add ${type} ${id} to the graph:`, error);
+    }
+}
+
+/**
  * Adds a node to the graph
  * @param {*} id The ID of the node
  * @param {*} name The name of the node
